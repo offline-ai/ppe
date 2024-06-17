@@ -359,6 +359,7 @@ $abort
 !fn |-
   myTool ({arg1, arg2}) {
     const tool = await require(__dirname + '/myTool.js')
+    return tool.myTool({arg1, arg2})
   }
 ```
 
