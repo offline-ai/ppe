@@ -547,8 +547,10 @@ $emit:
 - `save-chats`: 保存聊天记录时触发.
   - 回调参数: `(event, messages: AIChatMessage[], filename?: string) => void`
 
-**注意**: 事件中的`event`参数是`Event`对象, 是在脚本中触发才会被添加的参数, `this`为脚本runtime;
-如果直接在js中触发,则没有该参数,这个时候`this`就是`Event`对象, `this.target`才是脚本runtime. 而如果要返回结果则必须放在`this.result`上.
+**注意**:
+
+* 事件回调中的`event`参数是`Event`对象, `this`为脚本runtime;
+* 当事件回调返回值, 则表示修改参数或结果, 否则不修改;前提是该事件类型支持修改;
 
 ## Refs
 
