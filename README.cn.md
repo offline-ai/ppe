@@ -158,14 +158,14 @@ $ai run -f test
 配置包括:提示词工程的基础配置,提示词配置,模型参数配置,输入输出以及输入默认值配置
 输入输出以及输入默认值配置详见前述.
 
-提示词工程的基础配置有:
+#### 基础配置
 
 ```yaml
 ---
 _id: 不用说了,该脚本的唯一识别标识
 type: 脚本类型, char 表示脚色类型
 description: 该脚本的说明
-templateFormat: "该脚本的模板格式,默认为: 'hf', 也就是huggingface用的jinja2模板格式"
+templateFormat: "该脚本的模板格式,默认为: `hf`, 也就是huggingface用的jinja2模板格式; `golang` 也是 `ollama` 和 `localai`用的模板类型; `fstring` 也是 `langchain`在用的."
 contentType: 忽略,这里都是`script`
 rule: 该脚本支持的模型,通过匹配规则
 extends: 是扩展自哪个提示词模板
@@ -341,7 +341,7 @@ $abort
 
 #### `!fn` 定义函数指令
 
-`!fn` 使用自定义 tag 定义函数
+使用`!fn` tag 定义函数
 
 ```yaml
 !fn |-
@@ -355,15 +355,25 @@ $abort
 
 函数体是js语法. 定义函数中可以使用 `async require(moduleFilename)` 加载本地 esm 格式的js文件.
 
-在函数中,可以使用`this`来获取当前脚本的runtime的所有方法.
-
-所有的自定义函数都必须通过`$`打头引用. 如,在上面例子定义了`func1`,那么调用的时候必须用`$func1`:
-
 ```yaml
-$func1:
-  arg1: 1
-  arg2: 2
+!fn |-
+  myTool ({arg1, arg2}) {
+    const tool = await require(__dirname + '/myTool.js')
+  }
 ```
+
+**注意**:
+
+* `__dirname`: 为提示词脚本文件所在目录.
+* `__filename`: 为提示词脚本文件路径.
+* 在函数中,可以使用`this`来获取当前脚本的runtime的所有方法.
+* 所有的自定义函数都必须通过`$`打头引用. 如,在上面例子定义了`func1`,那么调用的时候必须用`$func1`:
+
+  ```yaml
+  $func1:
+    arg1: 1
+    arg2: 2
+  ```
 
 #### `!fn#` 定义模板函数指令
 
