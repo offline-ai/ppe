@@ -549,3 +549,12 @@ $emit:
 
 **注意**: 事件中的`event`参数是`Event`对象, 是在脚本中触发才会被添加的参数, `this`为脚本runtime;
 如果直接在js中触发,则没有该参数,这个时候`this`就是`Event`对象, `this.target`才是脚本runtime. 而如果要返回结果则必须放在`this.result`上.
+
+## Refs
+
+* [AutoGen](https://github.com/microsoft/autogen)
+* [LMQL](https://lmql.ai/)
+* [OpenInterpreter](https://github.com/OpenInterpreter/open-interpreter)
+* [Outlines](https://github.com/outlines-dev/outlines)
+* [MemGPT](https://github.com/cpacker/MemGPT/)
+* [LangChain](https://github.com/langchain-ai/langchain)
