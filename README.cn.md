@@ -140,7 +140,7 @@ $echo: "?=prompt.messages[0].content"  # 访问存储于prompt中的AI生成的�
 
 ```bash
 $ai run -f test
-write a simple joke without new line:  Why don't scientists trust atoms? Because they make up everything. Haha.
+讲个笑话： Why don't scientists trust atoms? Because they make up everything. 希望您喜欢！
 ```
 
 **注意**:
