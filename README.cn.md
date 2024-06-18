@@ -19,7 +19,7 @@ The [offline-ai/cli](https://github.com/offline-ai/cli) is an implementation of 
 
 ### 对话消息结构
 
-每行代表一次对话交流，可指定为系统(`system`)或用户(`user`)发言，未指定则默认为用户:
+每行代表一次对话交流，可指定为系统(`system`)、助手(`assistant`)或用户(`user`)发言，未指定则默认为用户:
 
 ```yaml
 system: "您是一位AI助手。"
