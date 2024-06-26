@@ -160,6 +160,28 @@ $ai run -f test
 * 目前同一消息只支持一个高级AI替换.
 * 如果没有高级AI替换,上一次的大模型返回结果依然会被存放在`prompt.RESPONSE`上,也就是默认会有`[[RESPONSE]]`模板变量.
 
+### 智能体脚本的调用
+
+在消息中,可以将结果发给其它智能体
+
+如果没有带参数,那么会把AI结果作为`result`参数传给智能体,eg
+
+```yaml
+user: "三块糖加上5块糖，列出计算表达式"
+assistant: "[[Calc]]"
+-> calculator  # 传入智能体的实际输入参数是: {result: "[AI生成的计算表达式]"}
+```
+
+如果带参数,那么会把AI结果`result`合并传入参数一起传给智能体, eg,
+
+```yaml
+user: "讲个笑话吧！"
+assistant: "[[JOKE]]"
+-> translator(target_lang="葡萄牙语") # 传入智能体的实际输入参数是: {result: "[这里是由AI生成的笑话]", target_lang: "葡萄牙语"}
+```
+
+注: 如果脚本返回值是`string`/`boolean`/`number`,那么都会将该返回值放到`result`字段.
+
 ## 规范
 
 ### Front-Matter 配置规范
