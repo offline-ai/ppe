@@ -32,7 +32,7 @@ system: "You are a helpful assistant."
 user: "what's 10 plus 18?"
 ```
 
-三连短划线(`---`) 或星号 `***` 则表示新对话开始,上下文将重置, eg:
+三个短划线(`---`) 或星号 `***` 则表示新对话开始,上下文将重置, eg:
 
 ```yaml
 system: "您是一位AI助手。"
