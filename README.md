@@ -38,11 +38,19 @@ A triple dash (`---`) or asterisks (`***`) initiates a new dialogue, resetting c
 system: "You're an AI."
 ---
 "user: What's 10 plus 18?"
-$AI                 # Executes the AI
-$print: "?=result"  # Prints AI response
----                 # New dialogue starts here
+assistant: "[[result]]"   # Executes the AI, replace the result which return by AI
+$print: "?=result"        # Prints AI response
+---                       # New dialogue starts here
 "user: What's 10 plus 12?"
-$AI
+assistant: "[[result]]"   # Executes the AI, replace the result which return by AI
+```
+
+The result:
+
+```bash
+$ai run -f test --no-stream
+" 10 plus 18 equals 28."
+ 10 plus 12 equals 22.
 ```
 
 ### Input & Output Customization
@@ -54,9 +62,9 @@ The input/output of a translator agent, eg:
 ```yaml
 ---
 input:
-  - source_lang     # Language of input; "auto" by default for auto-detection
-  - source_text: {required: true}  # Mandatory content for translation
-  - target_lang: {required: true}  # Target language
+  - lang     # Language of content; "auto" by default for auto-detection
+  - content: {required: true}  # Mandatory content for translation
+  - target: {required: true}  # Target language
 output:
   type: "object"
   properties:
@@ -157,10 +165,32 @@ Within messages, results can be forwarded to other agents.
 If no parameters are specified, the AI outcome will be passed as the `result` parameter to the agent. For instance,
 
 ```yaml
-user: "Three candies plus five candies, write out the calculation expression."
-assistant: "[[Calc]]"
+system: Only list the calculation expression, do not calculate the result
+---
+user: "Three candies plus five candies."
+assistant: "[[CalcExpression]]"
 -> calculator  # The actual input to the agent in this case is: {result: "[AI-generated calculation expression]"}
+$echo: "#A total of {{result}} pieces of candy"
 ```
+
+`calculator.ai.yaml`:
+
+
+```yaml
+---
+parameters:
+  response_format:
+    type: "json"
+output:
+  type: "number"
+---
+system: Please as a calculator to calculate the result of the following expression. Only output the result.
+---
+user: "{{result}}"
+```
+
+Note: In daily use, please do not use AI to perform numerical calculations, which is not what AI is good at. For example, try to let it perform decimal calculations, eg,
+`ai run -f calculator '{result: "13.1 + 4.857"}'`. However, CoT can be used to improve accuracy.
 
 When parameters are included, the AI `result` is combined with these parameters and forwarded together to the agent. For example,
 
@@ -267,7 +297,7 @@ callback: !fn |- # Anonymous function listener, event listener cannot be cancele
 $echo: ?=23+5
 ```
 
-### Command convention
+### Advance Command convention
 
 #### `$prompt` command to set prompt parameters
 

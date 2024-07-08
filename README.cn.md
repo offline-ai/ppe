@@ -38,11 +38,19 @@ user: "what's 10 plus 18?"
 system: "您是一位AI助手。"
 ---
 "10加18等于多少？"
-$AI                 # 执行AI
-$print: "?=result"  # 打印大模型传回的结果
----                 # 开始新对话,回到第一次的起点
+assistant: "[[result]]" # 执行AI,替换为AI传回的结果result
+$print: "?=result"      # 打印大模型传回的结果
+---                     # 开始新对话,回到第一次的起点
 user: "10加12等于多少？"
-$AI
+assistant: "[[result]]" # 执行AI,替换为AI传回的结果result
+```
+
+结果：
+
+```bash
+$ai run -f test --no-stream
+" 10加18等于28。"
+ 10加12等于22。
 ```
 
 ### 定义输入与输出
@@ -55,12 +63,12 @@ $AI
 ```yaml
 ---
 input:
-  # 输入语言，默认为"auto"自动检测
-  - source_lang
+  # 待翻译内容的语言，默认为"auto"自动检测
+  - lang
   # 必填，待翻译内容
-  - source_text: {required: true}
+  - content: {required: true}
   # 目标语言
-  - target_lang: {required: true}
+  - target: {required: true}
 output:
   type: "object"
   properties:
@@ -164,13 +172,33 @@ $ai run -f test
 
 在消息中,可以将结果发给其它智能体
 
-如果没有带参数,那么会把AI结果作为`result`参数传给智能体,eg
+如果没有带参数,那么会把AI结果作为`result`参数传给智能体,eg,
 
 ```yaml
-user: "三块糖加上5块糖，列出计算表达式"
-assistant: "[[Calc]]"
+system: "只列出计算表达式, 不要计算结果"
+---
+user: "三块糖加上5块糖"
+assistant: "[[CalcExpression]]"
 -> calculator  # 传入智能体的实际输入参数是: {result: "[AI生成的计算表达式]"}
+$echo: "#一共是{{result}}块糖"
 ```
+
+`calculator.ai.yaml`:
+
+```yaml
+---
+parameters:
+  response_format:
+    type: "json"
+output:
+  type: "number"
+---
+system: 请作为一个计算器，计算表达式结果. 只输出结果。
+---
+user: "{{result}}"
+```
+
+注意： 在日常使用中，请勿使用AI进行数字运算，这不是AI所擅长的,比如，请尝试让它进行小数运算，eg: `ai run -f calculator '{result: "13.1 + 4.857"}'`,不过是可以用CoT提高准确度。
 
 如果带参数,那么会把AI结果`result`合并传入参数一起传给智能体, eg,
 
@@ -278,7 +306,7 @@ $on:
 $echo: ?=23+5
 ```
 
-### 指令约定
+### 高级指令约定
 
 #### `$prompt`设置提示参数指令
 
