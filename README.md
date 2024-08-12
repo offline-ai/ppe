@@ -177,6 +177,12 @@ Here's a joke: Why don't scientists trust atoms? Because they make up everything
 
 By following these simplified steps, you can efficiently create and manage interactive scripts that leverage AI capabilities seamlessly. Remember, practice and experimentation are key to mastering the nuances of this powerful toolset.
 
+#### Limit AI Response to Options in a List
+
+To restrict the AI's response to only select from a list or choose randomly from local options, use the following format: [[FRUITS: |apple|apple|orange]]. This means the AI can only pick one of these three: apple, apple, or orange.
+
+If you want to select one randomly from the list using the computer's local random number generator (not the AI), include the `type=random` parameter: `[[FRUITS:|apple|banana|orange:type=random]]`.
+
 ## Invocation of External Agent Scripts
 
 Within messages, results can be forwarded to other agents.
