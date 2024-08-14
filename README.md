@@ -151,7 +151,9 @@ $AI:
   description: 'You are Harry Potter in Harry Potter set'  # The calling parameter has the highest priority, overwriting the description defined in the prompt object
 ```
 
-### Advanced AI Substitutions
+### Advanced Formatting
+
+#### Advanced AI Substitutions
 
 Use double square brackets `[[` `]]` for sophisticated AI-driven variable substitution within messages. For instance:
 
@@ -171,17 +173,31 @@ Here's a joke: Why don't scientists trust atoms? Because they make up everything
 
 **Note**:
 
-* Currently, only one advanced AI replacement is supported for the same message.
+* ~~Currently, only one advanced AI replacement is supported for the same message.~~
 * If there is no advanced AI replacement, the last AI return result will still be stored in `prompt.RESPONSE`, which means that there will be a `[[RESPONSE]]` template variable by default.
 * If parameters are needed, they should be placed after the colon, with multiple parameters separated by commas. eg, `[[RESPONSE:temperature=0.01,top_p=0.8]]`
 
 By following these simplified steps, you can efficiently create and manage interactive scripts that leverage AI capabilities seamlessly. Remember, practice and experimentation are key to mastering the nuances of this powerful toolset.
 
-#### Limit AI Response to Options in a List
+##### Limit AI Response to Options in a List
 
 To restrict the AI's response to only select from a list or choose randomly from local options, use the following format: [[FRUITS: |apple|apple|orange]]. This means the AI can only pick one of these three: apple, apple, or orange.
 
 If you want to select one randomly from the list using the computer's local random number generator (not the AI), include the `type=random` parameter: `[[FRUITS:|apple|banana|orange:type=random]]`.
+
+#### Advanced Script Invocation Formatting
+
+In messages, we support content substitution by invoking scripts or instructions. The script or instructions must return a string value. For example:
+
+```yaml
+user: "#five plus two equals @calculator(5+2)"
+```
+
+Notes:
+
+* The prefix `#` indicates immediate formatting of the string.
+* The prefix `@` indicates calling an external script with the ID `calculator`. To call an internal instruction, use the prefix `$`, such as `@$echo`; if there are no parameters, you must omit the parentheses.
+* If placed within text, ensure there is at least one space before and after. Extra spaces will be removed after substitution.
 
 ## Invocation of External Agent Scripts
 
@@ -303,9 +319,10 @@ $on:
 
 ### String conventions
 
+* `~` prefix: indicates never format string, eg, "`~{{description}}`"
 * `#` prefix: indicates immediate format string, eg, "`#{{description}}`"
-* `$` prefix: call command without parameters, eg, "`$AI`"
-* `$!` prefix: use the return value of the command without parameters as the message
+* ~~`$` prefix: call command without parameters, eg, "`$AI`"~~ deprecated
+* ~~`$!` prefix: use the return value of the command without parameters as the message~~
 * If the function return value message is a string, and the first character of the message is "#", it means to format the message immediately
 * `?=` Prefix: indicates expression
 * If the expression result is a string and starts with "#", it means to format the expression result immediately
