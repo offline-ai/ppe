@@ -199,6 +199,14 @@ Notes:
 * The prefix `@` indicates calling an external script with the ID `calculator`. To call an internal instruction, use the prefix `$`, such as `@$echo`; if there are no parameters, you must omit the parentheses.
 * If placed within text, ensure there is at least one space before and after. Extra spaces will be removed after substitution.
 
+Here’s an example of how to load a file and generate a summary using this method:
+
+```yaml
+user: |-
+  Generate a summary for the following file:
+  @file(file.txt)
+```
+
 ## Invocation of External Agent Scripts
 
 Within messages, results can be forwarded to other agents.
