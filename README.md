@@ -64,14 +64,18 @@ $ai run -f test.ai.yaml --no-stream
 
 To build reusable prompt templates, utilize [Front Matter](https://jekyllrb.com/docs/front-matter/) at the file's top:
 
-The `input`/`output` of a translator agent, eg:
+The following is an example script for a translation agent:
 
 ```yaml
 ---
+# Below is the input/output configuration
 input:       # the input items
-  - lang     # Language of content; "auto" by default for auto-detection
-  - content: {required: true}   # Mandatory content for translation
-  - target: {required: true}    # Target language
+  # Language of the content to be translated, default is "auto" for automatic detection
+  - lang
+  # Required, the content to be translated
+  - content: {required: true}
+  # Required, Target language
+  - target: {required: true}
 output:
   type: "object"
   properties:
@@ -84,12 +88,51 @@ output:
     target_lang:
       type: "string"
   required: ["target_text", "source_text", "source_lang", "target_lang"]
-source_text: "Text to translate."  # Default input value
-target_lang: "Chinese"             # Default target language
+# Optional configuration
+parameters:
+  # Using the parameters below will enforce JSON output format, ensuring the ai always outputs correct JSON format.
+  response_format:
+    type: "json"
+# Set the default value for the content and target input
+content: "I love my motherland and my hometown."
+target: "Chinese"
 ---
+# Below is the script content
+system: |-
+  You are the best translator in the world.
+
+  Output high-quality translation results in the JSON object and stop immediately:
+  {
+    "target_text": "the context after translation",
+    "source_text": "the original context to be translated",
+    "target_lang": "the target language",
+  }
+user: "{{content}}\nTranslate the above content {% if lang %}from {{lang}} {% endif %}to {{target}}."
 ```
 
-This section defines required inputs and structures expected outputs using [JSON Schema](https://json-schema.org/).
+The configuration section defines the required input items and specifies the expected output format according to [JSON Schema](https://json-schema.org/).
+
+The script outputs in the specified JSON format. For example, running with the default value:
+
+```bash
+# Assuming the script file is named translator.ai.yaml
+$ai run -f translator.ai.yaml
+```
+
+```json
+{
+  "target_text": "我爱我的祖国、我的家乡。",
+  "source_text": "I love my motherland and my hometown.",
+  "target_lang": "Chinese"
+}
+```
+
+running with your own input:
+
+```bash
+# Set your own input parameters to override the defaults
+$ai run -f translator.ai.yaml '{content: "10 plus 18 equals 28.", lang: "English", target: "Chinese"}'
+```
 
 **Note:**
 

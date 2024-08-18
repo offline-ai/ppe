@@ -14,16 +14,11 @@
 
 ## Quick Start
 
-**Tips**:
-
-* **脚本返回值**：脚本执行的最后一条指令的返回值,为脚本的返回值
-* **自动执行AI**：当脚本中存在提示消息并且一直到脚本结束也没有执行调用过`$AI`,那么脚本会自动在结束时执行`$AI`, 此行为可通过`autoRunLLMIfPromptAvailable`配置
-* **输出模式**：脚本默认采用流式输出，可使用`--no-stream` 开关禁用流式输出
-  * 注意: 并非所有LLM后端均支持流式输出.
-
 ### 对话消息结构
 
 在使用 YAML 格式来表示对话消息时，每一行代表了一次对话中的交流。对话可以通过“角色: 消息”的形式指定说话人，其中角色可以是系统（system）、助手（assistant）或用户（user）。如果省略了角色，默认就是用户在说话。
+
+可编程提示词引擎脚本的示例如下:
 
 ```yaml
 system: "您是一位AI助手。"
@@ -41,7 +36,7 @@ user: "what's 10 plus 18?"
 
 ```yaml
 system: "您是一位AI助手。"
----
+---                     # 这里为第一个对话的起点,而分隔线上面的内容可以当作系统提示词
 "10加18等于多少？"
 assistant: "[[result]]" # 执行AI,替换为AI传回的结果result
 $print: "?=result"      # 打印大模型传回的结果
@@ -66,10 +61,11 @@ $ai run -f test.ai.yaml --no-stream
 
 为了构建可复用的提示词工程,我们需要在文件的开头使用 [front-matter](https://jekyllrb.com/docs/front-matter/) 来配置提示词工程的输入和输出规则。`front-matter`第一行以`---`开始, 配置最后以`---`行结束.
 
-以下是一个翻译智能体角色的输入输出配置示例:
+以下是一个翻译智能体角色的脚本示例:
 
 ```yaml
 ---
+# 下面是输入输出配置
 input:
   # 待翻译内容的语言，默认为"auto"自动检测
   - lang
@@ -88,20 +84,57 @@ output:
       type: "string"
     target_lang:
       type: "string"
-  required: ["target_text", "source_text", "source_lang", "target_lang"]
-source_text: "this is a text to be translated."  # 可以设置 source_text 输入项的默认值
-target_lang: "Chinese"                           # 设置 target_lang 输入项的默认值
+  required: ["target_text", "source_text", "target_lang"]
+# 可选配置
+parameters:
+  # 使用后面的参数,将设置强制json输出格式,确保大模型总是输出正确的json格式.
+  response_format:
+    type: "json"
+# 设置 content 和 target 输入项的默认值
+content: "I love my motherland and my hometown."
+target: "Chinese"
 ---
+# 下面为脚本内容
+system: |-
+  You are the best translator in the world.
+
+  Output high-quality translation results in the JSON object and stop immediately:
+  {
+    "target_text": "the context after translation",
+    "source_text": "the original context to be translated",
+    "target_lang": "the target language",
+  }
+user: "{{content}}\nTranslate the above content {% if lang %}from {{lang}} {% endif %}to {{target}}."
 ```
 
-这一部分定义了必需的输入项并按[JSON Schema](https://json-schema.org/)规范定义了预期的输出格式。
+配置部分定义了必需的输入项并按[JSON Schema](https://json-schema.org/)规范定义了预期的输出格式。
+
+该脚本会按照指定的json格式输出, eg, 上面默认项的输出为:
+
+```bash
+#假设上面脚本的文件名为translator.ai.yaml
+$ai run -f translator.ai.yaml
+```
+
+```json
+{
+  "target_text": "我爱我的祖国、我的家乡。",
+  "source_text": "I love my motherland and my hometown.",
+  "target_lang": "Chinese"
+}
+```
+
+```bash
+# 设置自己的输入参数,替换默认值
+$ai run -f translator.ai.yaml '{content: "10加18等于28。", lang: "中文", target: "English"}'
+```
 
 **注意:**
 
 * `input` 可以约定输入项中哪些是必填项.
 * `output` 是用 [JSON Schema 规范](https://json-schema.org/)约定的输出
   * 默认只输出大模型的文本内容,如果希望返回大模型的全部内容(文本内容和参数),那么请设定`llmReturnResult: .`.
-  * 如果设置了强制输出为`JSON`(`response_format: {type: json}`),那么就只能一次完成, 必须根据输出json内容的最大长度设置`max_tokens`.
+  * 如果设置了强制输出为`JSON`(`response_format: {type: json}`),那么就只能一次完成,不能续写,必须根据输出json内容的最大长度设置`max_tokens`.
 
 ### 消息模板
 
@@ -164,7 +197,7 @@ $AI:
 
 ```yaml
 assistant: "讲个笑话：[[JOKE]] 希望您喜欢！"
-$echo: "?=prompt.messages[0].content"  # 访问存储于prompt中的AI生成的笑话
+$echo: "?=prompt.messages[0].content"  # 访问存储于prompt中的AI生成的笑话:第一个消息的内容
 ```
 
 此机制允许根据AI响应动态插入内容。
@@ -254,6 +287,13 @@ assistant: "[[JOKE]]"
 
 **注**: 如果脚本返回值是`string`/`boolean`/`number`,那么都会将该返回值放到`result`字段;如果返回值是`object`,则会直接将对象里的内容传递给智能体.
 
+**Tips**:
+
+* **脚本返回值**：脚本执行的最后一条指令的返回值,为脚本的返回值
+* **自动执行AI**：当脚本中存在提示消息并且一直到脚本结束也没有执行调用过`$AI`,那么脚本会自动在结束时执行`$AI`, 此行为可通过`autoRunLLMIfPromptAvailable`配置
+* **输出模式**：脚本默认采用流式输出，可使用`--no-stream` 开关禁用流式输出
+  * 注意: 并非所有LLM后端均支持流式输出.
+
 ## 规范
 
 ### Front-Matter 配置规范
@@ -328,7 +368,7 @@ $on:
 
 ### 字符串约定规范
 
-* `~` 前缀: 表示不对接着的字符串进行格式化, eg, "`~{{description}}`"
+* `~` 前缀: 表示不对接着的字符串进行格式化,原样返回, eg, "`~{{description}}`"
 * `#` 前缀: 表示立即进行 format string, eg, "`#{{description}}`"
 * ~~`$` 前缀: 无参数指令调用, eg, "`$AI`"~~ deprecated
 * ~~`$!`前缀: 把无参数指令的返回值作为消息~~
