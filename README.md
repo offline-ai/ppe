@@ -49,6 +49,9 @@ A triple dash (`---`) or asterisks (`***`) initiates a new dialogue, resetting c
 
 ```yaml
 system: "You're an AI."
+# This mark the beginning of the first dialogue.
+# The content above this line can be considered as system prompt instructions,
+# which will not be outputted or recorded.
 ---
 "user: What's 10 plus 18?"
 assistant: "[[result]]"   # Executes the AI, replace the result which return by AI
@@ -70,7 +73,7 @@ $ai run -f test.ai.yaml --no-stream
 
 ### Input & Output Customization
 
-To build reusable prompt templates, utilize [Front Matter](https://jekyllrb.com/docs/front-matter/) at the file's top:
+To build reusable prompt, utilize [Front Matter](https://jekyllrb.com/docs/front-matter/) at the file's top:
 
 The following is an example script for a translation agent:
 
