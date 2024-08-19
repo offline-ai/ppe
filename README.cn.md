@@ -23,11 +23,14 @@
 ```yaml
 system: "您是一位AI助手。"
 "10加18等于多少？" # 这是用户角色消息
+# user: "what's 10 plus 18?" # 这是同样的角色消息
 ```
 
+你也可以使用标准的YAML列表语法来表示:
+
 ```yaml
-system: "You are a helpful assistant."
-user: "what's 10 plus 18?"
+- system: "You are a helpful assistant."
+- user: "what's 10 plus 18?"
 ```
 
 三个短划线(`---`) 或星号 `***` 表示一个新的对话开始,并且之前的上下文会被清除，从头开始新的对话。eg:

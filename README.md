@@ -32,7 +32,15 @@ Each line represents a conversation turn, attributed to either `system`,`assista
 
 ```yaml
 system: "You're an AI assistant."
-"user: What's 10 plus 18?"
+"What's 10 plus 18?" # which is the user's input
+# user: "what's 10 plus 18?" # it's the same
+```
+
+You can also use standard YAML list syntax to represent:
+
+```yaml
+- system: "You are a helpful assistant."
+- user: "what's 10 plus 18?"
 ```
 
 A triple dash (`---`) or asterisks (`***`) initiates a new dialogue, resetting context:
