@@ -19,13 +19,6 @@ in the [offline-ai/cli](https://github.com/offline-ai/cli) project.
 
 Welcome to the streamlined guide for getting started quickly with your AI-powered scripting experience. This guide focuses on making the process of creating and executing interactive scripts more intuitive and straightforward. Let's dive in!
 
-### Essential Tips
-
-* Script Return Value: The script's final command's output determines its return value.
-* Auto-Execution: Scripts ending with prompts but no explicit `$AI` call will automatically execute `$AI` at the end, configurable via `autoRunLLMIfPromptAvailable`.
-* Output Mode: Scripts default to streaming output, can disable it using the `--no-stream` switch
-  * Note: not all LLM backends support streaming output.
-
 ### Structuring Dialogue
 
 Each line represents a conversation turn, attributed to either `system`,`assistant`, `user`, or implied `user` if not stated:
@@ -286,7 +279,7 @@ Notes:
 * In the message, the regular expression must be separated from other content by spaces.
 * If there is no match, the content of `VAR` is returned directly.
 
-## Invocation of External Agent Scripts
+### Invocation of External Agent Scripts
 
 Within messages, results can be forwarded to other agents.
 
@@ -331,6 +324,19 @@ assistant: "[[JOKE]]"
 ```
 
 **Note**: If the script returns a value of type `string`/`boolean`/`number`, that return value will be placed to the `content` field. If the return value is an `object`, its contents will be directly passed to the agent.
+
+#### Script File and Directory
+
+An agent script can be a single file or an entire directory. If it is a file, the filename must end with `.ai.yaml`. If it's a directory, it must contain a script file with the same name as the directory to serve as the entry point. Additionally, other script files within the same directory can call each other.
+
+For example, if there is a directory named `a-dir`, the entry point script should be named `a-dir/a-dir.ai.yaml`.
+
+#### Essential Tips
+
+* Script Return Value: The script's final command's output determines its return value.
+* Auto-Execution: Scripts ending with prompts but no explicit `$AI` call will automatically execute `$AI` at the end, configurable via `autoRunLLMIfPromptAvailable`.
+* Output Mode: Scripts default to streaming output, can disable it using the `--no-stream` switch
+  * Note: not all LLM backends support streaming output.
 
 ## Specifications
 
