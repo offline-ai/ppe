@@ -323,7 +323,7 @@ user: "{{content}}"
 user: "讲个笑话吧！"
 assistant: "[[JOKE]]"
 # 传入智能体的实际输入参数是: {content: "[这里是由AI生成的笑话]", target_lang: "葡萄牙语"}
--> translator(target_lang="葡萄牙语")
+-> translator(target_lang="葡萄牙语") -> $print
 ```
 
 **注**: 如果脚本返回值是`string`/`boolean`/`number`,那么都会将该返回值放到`content`字段;如果返回值是`object`,则会直接将对象里的内容传递给智能体.
