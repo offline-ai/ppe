@@ -280,7 +280,7 @@ Notes:
 * In the message, the regular expression must be separated from other content by spaces.
 * If there is no match, the content of `VAR` is returned directly.
 
-### Invocation of External Agent Scripts
+### Chains Invocation of External Agent Scripts
 
 Within messages, results can be forwarded to other agents.
 
