@@ -148,7 +148,10 @@ $ai run -f translator.ai.yaml '{content: "10 plus 18 equals 28.", lang: "English
 ### Message Templates
 
 The default message template format uses the lightweight [jinja2 template](https://en.wikipedia.org/wiki/Jinja_(template_engine)) syntax used by HuggingFace.
-Templates can be pre-defined or generated dynamically during script execution.
+
+Templates can be pre-defined in configuration or generated dynamically during script execution.
+
+The template formatting is by default delayed until it is passed to the large model. You can perform immediate formatting by prefixing with the `#` character.
 
 Currently supported template formats include:
 
@@ -159,7 +162,7 @@ Currently supported template formats include:
 **Note:**
 
 * Templates are rendered when `$AI` is called unless prefixed with `#` for immediate formatting.
-* Data sources for templates follow this hierarchy: `function arguments` > `prompt` object > `parameters` object.
+* Data sources for templates follow this hierarchy: `function arguments` > `prompt` object > `runtime` object.
 
 Messages can be generated during configuration, eg:
 
@@ -224,13 +227,11 @@ Here's a joke: Why don't scientists trust atoms? Because they make up everything
 * If there is no advanced AI replacement, the last AI return result will still be stored in `prompt.RESPONSE`, which means that there will be a `[[RESPONSE]]` template variable by default.
 * If parameters are needed, they should be placed after the colon, with multiple parameters separated by commas. eg, `[[RESPONSE:temperature=0.01,top_p=0.8]]`
 
-By following these simplified steps, you can efficiently create and manage interactive scripts that leverage AI capabilities seamlessly. Remember, practice and experimentation are key to mastering the nuances of this powerful toolset.
-
 ##### Limit AI Response to Options in a List
 
-To restrict the AI's response to only select from a list or choose randomly from local options, use the following format: [[FRUITS: |apple|apple|orange]]. This means the AI can only pick one of these three: apple, apple, or orange.
+To restrict the AI's response to only select from a list or choose randomly from local options, use the following format: `[[FRUITS: |apple|apple|orange]]`. This means the AI can only pick one of these three: apple, apple, or orange.
 
-If you want to select one randomly from the list using the computer's local random number generator (not the AI), include the `type=random` parameter: `[[FRUITS:|apple|banana|orange:type=random]]`.
+If you want to select one randomly from the list using the computer's local random number generator (not the AI), include the `type=random` parameter: `[[FRUITS:|apple|banana|orange:type=random]]`. You can use the shorthand version: `[[FRUITS:|apple|banana|orange:random]]`.
 
 #### Advanced Script Invocation Formatting
 
@@ -341,7 +342,7 @@ For example, if there is a directory named `a-dir`, the entry point script shoul
 
 ### Agent Script Inheritance
 
-Agent scripts can inherit content and configurations from another script through the `type` property. Here’s an example of creating a character named “Dobby”:
+Agent scripts can inherit code and configurations from another script through the `type` property. Here’s an example of creating a character named “Dobby”:
 
 ```yaml
 ---
