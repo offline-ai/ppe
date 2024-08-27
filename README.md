@@ -46,11 +46,11 @@ system: "You're an AI."
 # The content above this line can be considered as system prompt instructions,
 # which will not be outputted or recorded.
 ---
-"user: What's 10 plus 18?"
+user: What's 10 plus 18?
 assistant: "[[result]]"   # Executes the AI, replace the result which return by AI
 $print: "?=result"        # Prints AI response
 ---                       # New dialogue starts here
-"user: What's 10 plus 12?"
+user: What's 10 plus 12?
 assistant: "[[result]]"   # Executes the AI, replace the result which return by AI
 ```
 
@@ -338,6 +338,50 @@ For example, if there is a directory named `a-dir`, the entry point script shoul
 * Auto-Execution: Scripts ending with prompts but no explicit `$AI` call will automatically execute `$AI` at the end, configurable via `autoRunLLMIfPromptAvailable`.
 * Output Mode: Scripts default to streaming output, can disable it using the `--no-stream` switch
   * Note: not all LLM backends support streaming output.
+
+### Agent Script Inheritance
+
+Agent scripts can inherit content and configurations from another script through the `type` property. Here’s an example of creating a character named “Dobby”:
+
+```yaml
+---
+# This script inherits from the "char" type
+type: char
+# Specific settings for the "char" type
+# Character's name
+name: "Dobby"
+# Description of the character
+description: "Dobby is a house-elf in the Harry Potter universe."
+---
+# User's question
+user: "Who are you?"
+---
+# Response based on the character's settings
+assistant: "I am Dobby. Dobby is very happy."
+```
+
+First, we create a basic character type script called `char`, which the above script will inherit from:
+
+```yaml
+---
+# Indicates this is a type definition script
+type: type
+# Input configuration required for this character type
+input:
+  - name: {required: true}  # Required information: character's name
+  - description             # Optional information: character's description
+---
+# System instructions based on the provided information
+system: |-
+  You are an intelligent and versatile role player.
+  Your task is to flawlessly role-play according to the information provided below.
+  Please speak as if you were {{name}}.
+  You are {{name}}.
+
+  {{description}}
+```
+
+With these simple settings, one script can inherit code and configurations from another script.
 
 ## Specifications
 
