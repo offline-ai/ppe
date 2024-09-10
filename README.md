@@ -546,7 +546,7 @@ $tool:
   ...       # Other named parameters
 ```
 
-#### `$abort` command
+#### `$abort` directive
 
 Manually stop the response of the large model, which will generate an abort exception.
 
@@ -555,7 +555,7 @@ $AI
 $abort
 ```
 
-#### Pipeline command
+#### Pipeline directive
 
 `$pipe` will pass the result of the previous command to the pipeline.
 
@@ -642,9 +642,9 @@ $exec:
   args: "?=LatestResult" # Pass the result of $AI to the json agent script through parameters.
 ```
 
-#### `$if` command
+#### `$if` directive
 
-`$if` function supports conditional judgment
+`$if` directive supports conditional judgment
 
 ```yaml
 $set:
@@ -665,9 +665,36 @@ $set:
     $echo: Not OK
 ```
 
-#### $format function
+#### `$while` directive
 
-`$format` function uses Jinja2 template to format the string. The message formatting also uses Jinja2 template, which is also the template format supported by HuggingFace large model.
+The `$while` directive is used to execute a block of code repeatedly as long as the given condition is true. Here is a simple example:
+
+```yaml
+- $while: "i >= 0"
+  do:
+    - $set:
+        i: ?=i-1
+```
+
+Explanation
+
+* Condition Expression (`"i >= 0"`): This is the condition that must be true for the loop to continue executing.
+* Loop Body (`do:`): This section contains the operations that are executed during each iteration of the loop.
+
+Example Breakdown
+
+In this example, the `$while` directive checks whether the variable `i` is greater than or equal to 0. If the condition is true, it executes the operations within the loop body: decrementing the value of `i` by 1. This process continues until `i` is no longer greater than or equal to 0.
+
+Notes
+
+* Ensure that the loop condition eventually changes; otherwise, it can lead to an infinite loop.
+* The loop body can contain multiple operations, not just a single `$set` operation.
+
+Using the `$while` directive, you can implement basic looping logic suitable for various iterative processing scenarios.
+
+#### $format directive
+
+`$format` directive uses Jinja2 template to format the string. The message formatting also uses Jinja2 template, which is also the template format supported by HuggingFace large model.
 
 ```yaml
 $format: "{{description}}"
