@@ -409,6 +409,7 @@ extends: 是扩展自哪个提示词模板
 import: # 当导入的声明是函数时会自动给没有前缀的函数名称增加前缀"$"
   - "js package name"
   - "js/script/path.js": ['func1', 'func2'] # 只导入指定的函数
+  - 'ruby-funcs.rb'
   - "agent.ai.yaml": "asName" # 导入脚本, 并重命名为$asName
 # import: # Object Format
 #   "js package name": "*"
