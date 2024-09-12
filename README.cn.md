@@ -406,6 +406,14 @@ templateFormat: "该脚本的模板格式,默认为: `hf`, 也就是huggingface�
 contentType: 忽略,这里都是`script`
 modelPattern: 该脚本支持的模型,通过匹配规则
 extends: 是扩展自哪个提示词模板
+import: # 当导入的声明是函数时会自动给没有前缀的函数名称增加前缀"$"
+  - "js package name"
+  - "js/script/path.js": ['func1', 'func2'] # 只导入指定的函数
+  - "agent.ai.yaml": "asName" # 导入脚本, 并重命名为$asName
+# import: # Object Format
+#   "js package name": "*"
+#   "js/script/path.js": ['func1', 'func2']
+#   "agent.ai.yaml": "asName"
 创: 创建者相关信息
 签: 该脚本的签名
 ---

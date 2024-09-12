@@ -405,6 +405,15 @@ templateFormat: "The template format of this script, by default: `hf`, which is 
 contentType: Ignore, all here are `script`
 modelPattern: Models supported by this script, through matching rules
 extends: Which prompt template is extended from
+import: # When the imported declaration is a function, it automatically adds the prefix "$" to function names without a prefix
+  - "js package name"
+  - "js/script/path.js": ['func1', 'func2'] # Import only the specified functions
+  - 'ruby-funcs.rb'
+  - "agent.ai.yaml": "asName" # Import the script and rename it to "$asName"
+# import: # Object Format
+#   "js package name": "*"
+#   "js/script/path.js": ['func1', 'func2']
+#   "agent.ai.yaml": "asName"
 创: Creator related information
 签: The signature of this script
 ---
