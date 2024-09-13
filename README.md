@@ -405,19 +405,52 @@ templateFormat: "The template format of this script, by default: `hf`, which is 
 contentType: Ignore, all here are `script`
 modelPattern: Models supported by this script, through matching rules
 extends: Which prompt template is extended from
-import: # When the imported declaration is a function, it automatically adds the prefix "$" to function names without a prefix
-  - "js package name"
-  - "js/script/path.js": ['func1', 'func2'] # Import only the specified functions
-  - 'ruby-funcs.rb'
-  - "agent.ai.yaml": "asName" # Import the script and rename it to "$asName"
-# import: # Object Format
-#   "js package name": "*"
-#   "js/script/path.js": ['func1', 'func2']
-#   "agent.ai.yaml": "asName"
 创: Creator related information
 签: The signature of this script
 ---
 ```
+
+##### Import
+
+The `import` configuration to import functions and declarations in other script file
+
+Import one file:
+
+```yaml
+---
+import: "js_package_name"
+---
+```
+
+Import many files Use Array Format:
+
+```yaml
+---
+import:
+  - "js_package_name"
+  - "js/script/path.js": ['func1', 'func2'] # Import only the specified functions
+  - 'ruby-funcs.rb'
+  - "agent.ai.yaml": "asName" # Import the script and rename it to "$asName"
+---
+```
+
+Use Object Format:
+
+```yaml
+---
+import: # Object Format
+  "js_package_name": "*"
+  "js/script/path.js": ['func1', 'func2']
+  "agent.ai.yaml": "asName"
+---
+```
+
+**Note**:
+
+* the default is js module if not extension name provided.
+* The relative path is the folder of the current ai script, not the CWD(current working dir)
+* When the imported declaration is a function, it automatically adds the prefix "$" to function names without a prefix
+
 
 #### Prompt configuration
 

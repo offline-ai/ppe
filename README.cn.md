@@ -420,6 +420,47 @@ import: # 当导入的声明是函数时会自动给没有前缀的函数名称�
 ---
 ```
 
+##### Import
+
+`import` 配置用于从其他脚本文件中导入函数和声明。
+
+导入单个文件:
+
+```yaml
+---
+import: "js_package_name"
+---
+```
+
+导入多个文件**数组格式**:
+
+```yaml
+---
+import:
+  - "js_package_name"
+  - "js/script/path.js": ['func1', 'func2'] # 只导入指定的函数
+  - 'ruby-funcs.rb'
+  - "agent.ai.yaml": "asName" # 导入AI脚本函数并重命名为 "$asName"
+---
+```
+
+**对象格式**:
+
+```yaml
+---
+import:
+  "js_package_name": "*"
+  "js/script/path.js": ['func1', 'func2']
+  "agent.ai.yaml": "asName"
+---
+```
+
+**注意事项**
+
+* 如果没有提供扩展名，默认为 JavaScript 模块。
+* 相对路径基于当前 AI 脚本所在的文件夹，而不是当前工作目录 (CWD)。
+* 当导入的声明为 `函数` 时，会自动为没有前缀的函数名添加 "$" 前缀。
+
 #### 提示词配置
 
 ```yaml
