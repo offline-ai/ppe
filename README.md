@@ -450,7 +450,7 @@ import: # Object Format
 * the default is js module if not extension name provided.
 * The relative path is the folder of the current ai script, not the CWD(current working dir)
 * When the imported declaration is a function, it automatically adds the prefix "$" to function names without a prefix
-
+* If the function `initializeModule` exists in the module and is imported, it will be automatically executed after the module loads.
 
 #### Prompt configuration
 
