@@ -640,7 +640,7 @@ $abort
   }
 ```
 
-函数体是js语法. 定义函数中可以使用 `async require(moduleFilename)` 加载本地 esm 格式的js文件.
+函数体是默认是js. 定义函数中可以使用 `async require(moduleFilename)` 加载本地 esm 格式的js文件.
 
 ```yaml
 !fn |-
@@ -648,6 +648,14 @@ $abort
     const tool = await require(__dirname + '/myTool.js')
     return tool.myTool({arg1, arg2})
   }
+```
+
+如果要使用其他语言，需要指定语言:
+
+```yaml
+!fn |-
+  [python] def func1(arg1, arg2):
+    return arg1 + arg2
 ```
 
 **注意**:
@@ -663,9 +671,11 @@ $abort
     arg2: 2
   ```
 
+* 目前只支持js，准备添加python,ruby等支持.
+
 #### `!fn#` 定义模板函数指令
 
-`!fn#` 使用自定义 tag 定义模板函数,模板函数是指可以在默认的JinJa模板中使用的函数
+`!fn#` 将定义在Jinja模板中使用的函数,其他同`!fn`.
 
 ```yaml
 ---

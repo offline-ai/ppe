@@ -632,7 +632,7 @@ Use `!fn` tag to define function
   }
 ```
 
-The function body is js syntax. In the definition function, `async require(moduleFilename)` can be used to load local esm js file in the format.
+The function body is `javascript`. In the definition function, `async require(moduleFilename)` can be used to load local esm js file in the format.
 
 ```yaml
 !fn |-
@@ -640,6 +640,14 @@ The function body is js syntax. In the definition function, `async require(modul
   const tool = await require(__dirname + '/myTool.js')
   return tool.myTool({arg1, arg2})
   }
+```
+
+If you need to use other languages, you should specify the language:
+
+```yaml
+!fn |-
+  [python] def func1(arg1, arg2):
+    return arg1 + arg2
 ```
 
 **Note**:
@@ -654,6 +662,8 @@ The function body is js syntax. In the definition function, `async require(modul
   arg1: 1
   arg2: 2
   ```
+
+* Currently only supports JavaScript, planning to add support for Python, Ruby, etc.
 
 #### `!fn#` defines template function instructions
 
