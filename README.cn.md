@@ -3,7 +3,9 @@
 > 【[English](./README.md)|中文】
 ---
 
-可编程提示词引擎 (PPE) 被设计用于简化大型语言模型 (LLM) 的提示词创建与重用管理工作流程，使这一过程更加高效且易于理解。[本规范](https://github.com/offline-ai/ppe)在 [offline-ai/cli](https://github.com/offline-ai/cli) 项目中实现。
+可编程提示词工程 (PPE) 语言是一种简单且自然的脚本语言，专门用于处理提示词信息。这种语言用于开发各种智能体，这些智能体可以被重用、继承、组合或调用。该语言也可以用于简化大型语言模型 (LLM) 的提示词创建与重用管理工作流程，使这一过程更加高效且易于理解。[本规范](https://github.com/offline-ai/ppe)在 [offline-ai/cli](https://github.com/offline-ai/cli) 项目中实现。
+
+可编程提示词语言是
 
 ## 特色功能
 
