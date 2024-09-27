@@ -123,26 +123,15 @@ AI的理解方式是基于模拟的神经网络，通过分析大量的文本数
 
 当前LLM并不能自如的使用各种思维方法，去思考问题，有时候甚至会"偷懒"，但是只要进行思维方法的提示，它就会按照你提示的思维方法进行思考。
 
-* **仔细思考(Think Carefully)**，鼓励AI慢下来，深入思考问题，而不是急于给出答案。
-  * `"Think carefully about the implications of this decision."`
-  * `"Let's take our time and consider all the possible outcomes."`
-* **解释原因 (Explain Your Reasoning)**: 要求AI不仅给出答案，还要解释其背后的逻辑和原因，这有助于AI更深入地理解问题。
-  * `"What led you to that conclusion?"`
-  * `"Can you walk me through your thought process?"`
-* **举例说明(Illustrate with Examples)**: 当语言难以表达的时候，我们可以使用例子来帮助AI理解，就像我们用故事来传达道理一样. 链式思考(CoT)本身也可以用举例说明来表达
-* **一步一步 (Step-by-Step)**：面对逻辑问题，需要的思考方法，这有一个高大上的名称,"链式思考(CoT)",例如
-  * `"Can you walk me through each step of your solution?"`
-* **逐步分解(Deconstruct the Problem)**: 复杂问题，需要进一步分解问题后，一步一步的完成，例如：
-  * `"Let's break down this problem into smaller, more manageable steps."`
-* **比较分析 (Compare and Contrast)**： 引导AI从不同角度分析问题，并找出差异和相似性。例如:
-  * `"What are the similarities and differences between these two approaches?"`
-  * `"How does this solution compare to previous ones?"`
-* **假设推理 (Deductive Reasoning)**: 引导AI从已知条件出发，推导结论。
-  * `"If this is true, then what can we conclude?"`
-  * `"What are the logical consequences of this statement?"`
-* **归纳总结 (Inductive Reasoning)**： 引导AI从具体事例中归纳出一般规律。
-  * `"What patterns do you see in these examples?"`
-  * `"Can you formulate a general rule based on these observations?"`
+* **仔细思考 (Think Carefully)**：鼓励AI在处理问题时，先放慢速度，进行深入分析，避免因急于得出结论而忽略细节或潜在影响。这种思维方式强调的是质量而非速度，确保每一个决策都是经过充分考量的结果。例如，在做出某个决定之前，可以提醒AI：`“Think carefully about the implications of this decision.”` 或者说：`“Let's take our time and consider all the possible outcomes.”` 这样可以帮助AI全面评估各种可能的情况，从而做出更为明智的选择。
+
+* **解释原因 (Explain Your Reasoning)**：要求AI不仅提供解决方案，还需详细阐述其决策过程中的逻辑依据与背景信息，以便于更好地理解和验证其答案。这种做法不仅有助于增强用户对AI的信任感，还能促进更深层次的互动。例如，可以询问AI：`“What led you to that conclusion?”` 或者：`“Can you walk me through your thought process?”` 这些提问促使AI展示其推理链条，使用户能够清楚地了解AI是如何得出特定结论的。
+
+* **举例说明 (Illustrate with Examples)**：当文字描述不足以清晰传达概念时，通过具体实例来辅助说明，可以使AI更容易理解抽象概念。这种方法尤其适用于那些难以用语言直接表达的情形。例如，可以请求AI：`“Could you give an example to clarify this point?”` 或者：`“How would this work in a real-world scenario?”` 通过实际案例，不仅可以让复杂的理论变得直观易懂，还能帮助AI更好地掌握问题的核心要素。
+
+* **一步一步 (Step-by-Step)**：对于逻辑复杂的问题，采用分步骤解决的方法，即所谓的“链式思考”（CoT），有助于确保每一步骤的正确性，从而得出准确的答案。这种方法强调的是按部就班地推进，确保每一步都清晰明确。例如，可以问AI：`“Can you walk me through each step of your solution?”` 或者：`“Let's go over this one step at a time.”` 这种方式能够帮助用户跟随AI的思路，逐层深入地理解问题的解决过程。
+
+* **逐步分解 (Deconstruct the Problem)**：面对结构复杂的问题时，将其拆解为若干个较小且易于管理的部分，逐一解决后再综合起来，能够有效提高解决问题的效率。这种方法类似于将一个大任务分解成多个小任务，使得每个部分都可以独立解决。例如，可以建议：`“Let's break down this problem into smaller, more manageable steps.”` 或者：`“We should tackle each component of this issue separately before combining them.”` 这种逐步分解的方式不仅简化了问题的处理难度，还提高了最终解决方案的质量。
 
 注意:
 
@@ -156,13 +145,11 @@ AI的理解方式是基于模拟的神经网络，通过分析大量的文本数
 除了有效沟通和正确的思维方式，有效的激励措施对人类和LLM同样重要。适当的激励不仅能提升人类的积极性，也能激发LLM更好地理解和执行任务。
 就像我们用鼓励和赞赏来激发孩子的学习兴趣一样，适当的激励可以帮助LLM更好地理解任务，并发挥出更大的潜力。🚀
 
-1. **物质奖励🏅**:  这是最直接的激励方式，例如，“解决这个问题，我会给你200美元。”虽然LLM不能真正接收金钱，但在指令中提及物质奖励，可以暗示问题的重要性，激发其更专注地处理任务。💸
-2. **情感诉求💖**: 通过表达任务的重要性和个人情感上的需求，可以激发LLM的“同情心”。例如，“解决这个问题，关系到我整个职业生涯，全拜托你了。”或者，“我们非常需要你的帮助，来解决这个棘手的问题。”这样可以传达任务的紧迫性和重要性。❤️
-3. **专业认同🎖️**: 提到任务的复杂性和专业性，可以激发LLM发挥其潜在的能力。例如，“指挥官，我们迫切需要您的专业技能以及使用所有可用数据来指导我们渡过这一难关。”这样不仅强调了任务的专业性，还提升了LLM的角色认同感。🎖️
-4. **挑战性任务🏆**: 提供具有挑战性的任务，可以激发LLM的求知欲和解决问题的动力。例如，“请尝试解决这个领域内尚未有人解答的难题。”这种挑战性的指令可以激发LLM的探索精神。🔍
-5. **认可与赞赏👍**: 提前表达对LLM工作的认可和赞赏，可以提升其积极性。例如，“你以前的解答非常出色，我相信这次你也能给出令人满意的答案。”这种正面的反馈可以增强LLM的自信和动力。🌟
-6. **时间紧迫性🚨**: 强调任务的时间紧迫性，可以促使LLM快速而准确地处理任务。例如，“请尽快分析这份报告，我们的时间非常有限。”这样可以激发LLM的紧迫感和效率。⏰
-7. **社会影响力📢**: 通过强调任务的社会影响力，可以激发LLM的责任感和使命感。例如，“这个问题关系到许多人的生活，我们需要你来帮助我们找到解决方案。”这种社会价值的传达可以激发LLM更深层次的参与感。🌍
+1. **物质奖励 🏅**: 这是最直接的激励方式。尽管大型语言模型（LLM）无法真正接收金钱，但在指令中提及物质奖励可以暗示问题的重要性，激发其更专注地处理任务。例如，“解决这个问题，我会给你200美元。”虽然这并不是真正的支付，但这种表述可以传达出问题的关键性和紧急性。通过这种方式，可以暗示任务的难度和重要性，让LLM更加认真对待。即使LLM无法实际获得物质奖励，这种表述也能让其感受到任务的紧迫性和重要性，从而更加专注地思考和解决问题。这种激励方式不仅能够提升LLM的积极性，还能确保其在处理问题时更加细致和全面。💸
+
+2. **情感诉求 💖**: 通过表达任务的重要性和个人情感上的需求，可以激发LLM的“同情心”。例如，“解决这个问题，关系到我整个职业生涯，全拜托你了。”或者，“我们非常需要你的帮助，来解决这个棘手的问题。”这些话语不仅传达了任务的紧迫性和重要性，还能让LLM感受到用户的期望和信任。通过这种方式，可以激发LLM的情感共鸣，使其更加投入地解决问题。这种情感上的连接不仅能够增强LLM的责任感，还能让其在处理问题时更加细致和周到。此外，这种情感诉求还可以增强用户与LLM之间的互动，提高解决问题的效率。❤️
+
+3. **专业认同 🎖️**: 提到任务的复杂性和专业性，可以激发LLM发挥其潜在的能力。例如，“指挥官，我们迫切需要您的专业技能以及使用所有可用数据来指导我们渡过这一难关。”这种表述不仅强调了任务的专业性，还提升了LLM的角色认同感。通过这种方式，可以增强LLM的信心和责任感，使其更加自信地应对挑战。这种专业认同不仅能够让LLM更好地发挥其潜在能力，还能在处理复杂问题时更加细致和全面。此外，这种角色认同感还能让LLM在解决问题时更有动力，从而提高解决问题的质量和效率。🎖️
 
 通过不断地尝试和探索不同的激励方式，我们可以找到最适合LLM的激励策略，帮助它更好地理解任务，并发挥出更大的潜力。
 
