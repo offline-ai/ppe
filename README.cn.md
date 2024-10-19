@@ -84,7 +84,7 @@ input:
   # 待翻译内容的语言，默认为"auto"自动检测
   - lang
   # 必填，待翻译内容
-  - content: {required: true}
+  - content: {required: true, index: 0}
   # 目标语言
   - target: {required: true}
 output:
@@ -145,7 +145,7 @@ $ai run -f translator.ai.yaml '{content: "10加18等于28。", lang: "中文", t
 
 **注意:**
 
-* `input` 可以约定输入项中哪些是必填项.
+* `input` 可以约定输入项中哪些是必填项. 其中 `index` 为可选的基于位置的参数索引。
 * `output` 是用 [JSON Schema 规范](https://json-schema.org/)约定的输出
   * 默认只输出大模型的文本内容,如果希望返回大模型的全部内容(文本内容和参数),那么请设定`llmReturnResult: .`.
   * 如果设置了强制输出为`JSON`(`response_format: {type: json}`),那么就只能一次完成,不能续写,必须根据输出json内容的最大长度设置`max_tokens`.

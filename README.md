@@ -74,7 +74,7 @@ input:       # the input items
   # Language of the content to be translated, default is "auto" for automatic detection
   - lang
   # Required, the content to be translated
-  - content: {required: true}
+  - content: {required: true, index: 0}
   # Required, Target language
   - target: {required: true}
 output:
@@ -137,7 +137,7 @@ $ai run -f translator.ai.yaml '{content: "10 plus 18 equals 28.", lang: "English
 
 **Note:**
 
-* `input` can specify which input items are required.
+* `input` can specify which input items are required. The `index` is an optional positional parameter index.
 * `output` specifies the output using the [JSON Schema specification](https://json-schema.org/)
   * By default, only the text content of the large model is output. If you want to return the entire content of the large model (text content and parameters), please set `llmReturnResult: .`.
   * If forced output as `JSON` (`response_format: {type: json}`) is set, then it can only be completed in one attempt, and `max_tokens` must be set according to the maximum length of the output JSON content.
