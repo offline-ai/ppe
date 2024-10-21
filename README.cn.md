@@ -440,7 +440,7 @@ import: "js_package_name"
 ---
 import:
   - "js_package_name"
-  - "js/script/path.js": ['func1', 'func2'] # 只导入指定的函数
+  - "js/script/path.js": ['func1', 'func2', {func3: 'asFunc3'}] # 只导入指定的函数
   - 'ruby-funcs.rb'
   - "agent.ai.yaml": "asName" # 导入AI脚本函数并重命名为 "$asName"
 ---

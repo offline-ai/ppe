@@ -425,7 +425,7 @@ Import many files Use Array Format:
 ---
 import:
   - "js_package_name"
-  - "js/script/path.js": ['func1', 'func2'] # Import only the specified functions
+  - "js/script/path.js": ['func1', 'func2', {func3: 'asFunc3'}] # Import only the specified functions
   - 'ruby-funcs.rb'
   - "agent.ai.yaml": "asName" # Import the script and rename it to "$asName"
 ---
