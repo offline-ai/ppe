@@ -732,34 +732,38 @@ $set:
 
 `$match` 指令用于根据变量或上一次操作的结果进行多分支匹配。支持多种匹配方式，包括正则匹配、键值匹配、完整匹配、表达式匹配、范围匹配、忽略匹配、对象匹配等。
 
+匹配项前必须有冒号`:`，冒号后面是匹配项，中间不能有空格。
+condition 将 作为`COND__` 传入执行部分.
+
 ```yaml
-# variable 可选, 如果没有则是以LastResult为条件,
+# condition 可选, 如果没有则是以LastResult为条件,
 # $match默认为顺序执行一旦找到一个匹配的模式，就会执行对应的分支，并且不会继续检查后续的模式。
-# 如果设置参数parallel为真，那么就会执行所有匹配的分支项。
-$match(variable[, parallel=false]):
+# 如果设置参数allMatches为 true，那么就会执行所有匹配的分支项，默认为false。
+# 如果设置参数 parallel 为 true，那么就会并行执行所有匹配的分支项，仅当allMatches为真时才有意义。
+$match(condition[, allMatches=false]):
   # 正则匹配
-  /RegEx/:
+  :/RegEx/:
     - $echo: matched
-  # 可以是lastResult对象的key
-  key == '...':
+  # 可以是条件比较
+  :> 12:
     - $echo: matched
-  # 完整匹配,如果variable是字符串 or 数字
-  '...':
+  # 完整匹配,如果condition是字符串 or 数字
+  :"string": # :123
     - $echo: matched
-  # 表达式匹配, variable === 1 or variable == 2
-  1 || 2:
+  # 表达式匹配, condition === 1 or condition == 2
+  :1 || 2:
     - $echo: matched
-  # 范围匹配,  1..5 表示`[1..5]`全闭区间, `1..<5` 表示`[1,5)`, 1>..5 表示`(1, 5]`
-  1..5:
+  # 范围匹配,  1..5 表示`[1..5]`全闭区间, `1..<5` 表示`[1,5)` 从1到小于5的半闭区间, 1>..5 表示`(1, 5]` 大于1到5的半闭区间。
+  :1..5:
     - $echo: matched
   # 忽略特定项匹配,这个只匹配数组的第一项和第四项,也就是必须存在第一项和第四项并且数组长度是4,并且将第一项的值赋予first,第四项的值赋予last
-  "[first, _, _, last]":
+  ":['a,b', _, _, last]":
     - $echo: matched
   # 表示匹配完整对象
-  "{x: 'a', y: 1||2 }":
+  ":{x='a', y=':1||2' }":
     - $echo: matched
   # 表示部分匹配
-  "{x: 'a', ..}":
+  ":{x='a', ..}":
     - $echo: matched
   # 否则
   _ :
