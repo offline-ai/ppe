@@ -720,16 +720,22 @@ $set:
 The `$while` directive is used to execute a block of code repeatedly as long as the given condition is true. Here is a simple example:
 
 ```yaml
+- $set:
+    i: 5
 - $while: "i >= 0"
   do:
     - $set:
         i: ?=i-1
+    - $if: "i == 2"
+      then: $break
 ```
 
 Explanation
 
 * Condition Expression (`"i >= 0"`): This is the condition that must be true for the loop to continue executing.
 * Loop Body (`do:`): This section contains the operations that are executed during each iteration of the loop.
+* The `$break` directive is used to prematurely end a loop.
+* The `$continue` directive is used to skip the current iteration of a loop and proceed directly to the next iteration.
 
 Example Breakdown
 
