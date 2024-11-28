@@ -803,7 +803,33 @@ $match(condition[, allMatches=false]):
 
 通过 `$while` 指令，你可以实现基本的循环逻辑，适用于多种场景下的迭代处理。
 
-#### $format 指令
+#### `$for` 指令
+
+`$for` 指令用于迭代一个列表，并执行一段代码块。下面是一个简单的示例：
+
+```yaml
+$for: "[1, 2, 3, 4, 5]"
+  as:
+    value: item
+  do:
+    - $print("The current item is:{{item}}")
+```
+
+```yaml
+$for: "{a:1, b:2}"
+  as:
+    index: k
+    value: v
+  do:
+    - $print("The current item is:{{k}}={{v}}")
+```
+
+* `as` 可省略，如果省略, 默认 `value` 会被赋予当前循环的元素, `index` 会被赋予当前循环的索引。`entries` 为键值对列表`[[index, value], ...]`。
+* 循环体 (`do:`): 这部分包含了在每次循环时需要执行的操作。
+* `$break` 指令用于在循环体中提前结束循环。
+* `$continue` 指令用于在循环体中跳过当前循环，直接进入下一次循环。
+
+#### `$format` 指令
 
 `$format` 函数使用Jinja2模板格式化字符串,消息的格式化也是使用的Jinja2模板,这也是HuggingFace大模型支持的模板格式.
 

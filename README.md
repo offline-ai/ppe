@@ -748,6 +748,32 @@ Notes
 
 Using the `$while` directive, you can implement basic looping logic suitable for various iterative processing scenarios.
 
+#### `$for` directive
+
+The `$for` instruction is used to iterate over a list and execute a block of code. Here is a simple example:
+
+```yaml
+$for: "[1, 2, 3, 4, 5]"
+  as:
+    value: item
+  do:
+    - $print("The current item is:{{item}}")
+```
+
+```yaml
+$for: "{a:1, b:2}"
+  as:
+    index: k
+    value: v
+  do:
+    - $print("The current item is:{{k}}={{v}}")
+```
+
+* `as` can be omitted. it will default to: `value` will be assigned the current element of the loop, and `index` will be assigned the current index of the loop. `entries` is a list of key-value pairs `[[index, value], ...]`.
+* Loop body (`do:`): This section contains the operations to be performed in each iteration of the loop.
+* The `$break` instruction is used to prematurely end a loop.
+* The `$continue` instruction is used to skip the current iteration of the loop and proceed directly to the next iteration.
+
 #### $format directive
 
 `$format` directive uses Jinja2 template to format the string. The message formatting also uses Jinja2 template, which is also the template format supported by HuggingFace large model.
