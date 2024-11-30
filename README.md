@@ -730,6 +730,47 @@ $set:
     $echo: Not OK
 ```
 
+#### `$match` directive
+
+The `$match` instruction is used to perform multi-branch matching based on variables or the result of the previous operation. It supports various matching methods, including regular expression matching, key-value matching, exact matching, expression matching, range matching, ignore matching, object matching, etc.
+
+Each match item must be preceded by a colon `:`, followed by the match item, with no spaces in between. The condition is passed as `COND__` to the execution part.
+
+```yaml
+# The `condition` is optional. If not provided, the last result is used as the condition.
+# By default, `$match` executes in order and stops once it finds a matching pattern, without checking subsequent patterns.
+# If the `allMatches` parameter is set to `true`, then all matching branches will be executed. The default is `false`.
+# If the `parallel` parameter is set to `true`, then all matching branches will be executed in parallel. This is only meaningful when `allMatches` is `true`.
+$match(condition[, allMatches=false]):
+  # Regular expression matching
+  :/RegEx/:
+    - $echo: matched
+  # Conditional comparison
+  :> 12:
+    - $echo: matched
+  # Exact match, if the condition is a string or number
+  :"string": # :123
+    - $echo: matched
+  # Expression matching, condition === 1 or condition == 2
+  :1 || 2:
+    - $echo: matched
+  # Range matching, 1..5 represents the closed interval `[1..5]`, 1..<5 represents the half-open interval `[1,5)`, 1>..5 represents the half-open interval `(1, 5]`.
+  :1..5:
+    - $echo: matched
+  # Ignore specific items matching, this matches arrays with the first and fourth items, meaning the array must have a length of 4, and the first item's value is assigned to `first`, and the fourth item's value is assigned to `last`
+  ":['a,b', _, _, last]":
+    - $echo: matched
+  # Match a complete object
+  ":{x='a', y=':1||2' }":
+    - $echo: matched
+  # Partial match object
+  ":{x='a', ..}":
+    - $echo: matched
+  # Otherwise
+  _ :
+    - $echo: else matched
+```
+
 #### `$while` directive
 
 The `$while` directive is used to execute a block of code repeatedly as long as the given condition is true. Here is a simple example:

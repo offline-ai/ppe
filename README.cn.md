@@ -269,7 +269,7 @@ name: 'Harry Potter'
 description: "Act as Harry Potter"
 ---
 - assistant: "你好,dobby!,我是{{name}}!"
-- $for: 3 # 3轮对话
+- $for: 3 # for 循环建立3轮对话
   do:
     - user: "@dobby(message=true)"
     - assistant: "[[AI]]" # 调用AI产生Harry Potter的回答
