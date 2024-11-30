@@ -238,9 +238,9 @@ $ai run -f test.ai.yaml
 
 如果需要从本地随机选择一个（使用计算机本地的随机数生成器而非 AI），则需加上 `type='random'` 参数：`[[FRUITS:|苹果|香蕉|橙子:type='random']]`,该参数可以缩写为: `[[FRUITS:|苹果|香蕉|橙子:random]]`
 
-#### 高级脚本调用格式化
+#### 高级脚本调用消息
 
-在消息中，我们支持通过调用脚本或指令来进行内容替换。这些脚本或指令需要返回一个字符串结果。例如：
+在消息中，我们支持通过调用外部脚本或指令来进行内容替换。这些脚本或指令需要返回一个字符串结果。例如：
 
 ```yaml
 user: "#五加二等于 @calculator(5+2)"
@@ -258,6 +258,21 @@ user: "#五加二等于 @calculator(5+2)"
 user: |-
   为下面文件生成摘要:
   @file(file.txt)
+```
+
+##### 外部智能体多轮交互调用方式
+
+```yaml
+---
+type: char
+name: 'Harry Potter'
+description: "Act as Harry Potter"
+---
+- assistant: "你好,dobby!,我是{{name}}!"
+- $for: 3 # 3轮对话
+  do:
+    - user: "@dobby(message=true)"
+    - assistant: "[[AI]]" # 调用AI产生Harry Potter的回答
 ```
 
 #### 正则表达式(RegExp)格式化替换
@@ -808,6 +823,23 @@ $match(condition[, allMatches=false]):
 `$for` 指令用于迭代一个列表，并执行一段代码块。下面是一个简单的示例：
 
 ```yaml
+$for: 3 # 遍历从 1 到 3
+  as:
+    value: item
+  do:
+    - $print("The current item is:{{item}}")
+```
+
+```yaml
+$for: 1.5..5.5 # 遍历从 1.5 到 5.5,步长为0.5
+  step: 0.5 # 默认步长为1
+  as:
+    value: item
+  do:
+    - $print("The current item is:{{item}}")
+```
+
+```yaml
 $for: "[1, 2, 3, 4, 5]"
   as:
     value: item
@@ -824,7 +856,7 @@ $for: "{a:1, b:2}"
     - $print("The current item is:{{k}}={{v}}")
 ```
 
-* `as` 可省略，如果省略, 默认 `value` 会被赋予当前循环的元素, `index` 会被赋予当前循环的索引。`entries` 为键值对列表`[[index, value], ...]`。
+* `as` 可省略，如果省略, 将默认定义为: `value` 会被赋予当前循环的元素, `index` 会被赋予当前循环的索引。`items` 为遍历的对象，如果是数值范围则为`{start, end, step}`。
 * 循环体 (`do:`): 这部分包含了在每次循环时需要执行的操作。
 * `$break` 指令用于在循环体中提前结束循环。
 * `$continue` 指令用于在循环体中跳过当前循环，直接进入下一次循环。

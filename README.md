@@ -252,6 +252,21 @@ user: |-
   @file(file.txt)
 ```
 
+##### Multi-turns dialogue with external agents
+
+```yaml
+---
+type: char
+name: 'Harry Potter'
+description: "Act as Harry Potter"
+---
+- assistant: "Hello, dobby! I am {{name}}!"
+- $for: 3 # Three rounds of dialogue
+  do:
+    - user: "@dobby(message=true)"
+    - assistant: "[[AI]]" # call the AI as Harry Potter generate a response.
+```
+
 #### Regular Expression (RegExp) Formatting
 
 You can use regular expressions in messages with the format `/RegExp/[opts]:VAR[:index_or_group_name]` for content replacement. For example:
@@ -753,6 +768,14 @@ Using the `$while` directive, you can implement basic looping logic suitable for
 The `$for` instruction is used to iterate over a list and execute a block of code. Here is a simple example:
 
 ```yaml
+$for: 3 # Iterate over the numbers 1 to 3
+  as:
+    value: item
+  do:
+    - $print("The current item is:{{item}}")
+```
+
+```yaml
 $for: "[1, 2, 3, 4, 5]"
   as:
     value: item
@@ -769,7 +792,7 @@ $for: "{a:1, b:2}"
     - $print("The current item is:{{k}}={{v}}")
 ```
 
-* `as` can be omitted. it will default to: `value` will be assigned the current element of the loop, and `index` will be assigned the current index of the loop. `entries` is a list of key-value pairs `[[index, value], ...]`.
+* `as` can be omitted. it will default to: `value` will be assigned the current element of the loop, and `index` will be assigned the current index of the loop. `items` is the object to iterate over. If it is a numeric range, it should be `{start, end, step}`.
 * Loop body (`do:`): This section contains the operations to be performed in each iteration of the loop.
 * The `$break` instruction is used to prematurely end a loop.
 * The `$continue` instruction is used to skip the current iteration of the loop and proceed directly to the next iteration.
