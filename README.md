@@ -10,7 +10,14 @@ Programmable Prompt Engineering (PPE) language is a simple and natural scripting
 - **Enhance Script Compatibility**: Design prompts that are agnostic to specific LLMs, ensuring they can be used across various models.
 - **User-Friendly Design**: Enable application developers to use prompt engineering projects as they would any other code library, without requiring deep knowledge of AI internals.
 - **Evolve the Role of Prompt Engineers**: Shift the focus of prompt engineers towards developing versatile, model-agnostic scripts to foster wider adoption and innovation.
-- **Categorize Prompts Clearly**: Divide prompt engineering projects into two main categories: foundational scripts for underlying logic and role-specific scripts tailored to end-user needs.
+- Prompt Layer Structure: Clearly defined and customizable prompt type
+  * Function Prompt: `lib` type, each PPE prompt file acts as a function, available for other prompts or code to call, for example, text file read `file()`, fetch URL `url()` are all function prompts
+    * This allows referencing in messages with `@a specific prompt`, used to call a particular input/output agreed prompt function, such as `@file(...)`, `@url(https://...)`
+  * Class Prompt: Each PPE prompt file acts as an inheritable class, overriding configurations and code inheritance
+    * Type: `type` type, used for customizing prompt scripts of specific types
+    * You can also use prompts to define other types
+    * Character: Character type, prompt scripts with specific role positioning, "character type" itself is also a prompt script
+  * Application Prompt: Composed of several prompt files under a directory, the main entry prompt file's basename is the same as the directory name, for example, `guide`
 
 ## Quick Start
 
