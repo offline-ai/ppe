@@ -28,7 +28,7 @@
 
 ## Quick Start
 
-### 对话消息结构
+### 结构化对话消息
 
 在使用 YAML 格式来表示对话消息时，每一行代表了一次对话中的交流。对话可以通过“角色: 消息”的形式指定说话人，其中角色可以是系统（system）、助手（assistant）或用户（user）。如果省略了角色，默认就是用户在说话。
 
@@ -73,6 +73,66 @@ $ai run -f test.ai.yaml --no-stream
 " 10加18等于28。"
  10加12等于22。
 ```
+
+#### 群聊消息
+
+对于角色脚本，我们可以使用`char[@other_char]`实现char对other_char的对话。
+
+`char_translator.ai.yaml` 角色脚本:
+
+```yaml
+---
+type: char
+name: "translator"
+description: You are a professional multi-lingual translator.
+---
+--- # New dialogue starts here
+```
+
+`char-dobby.ai.yaml` 角色脚本:
+
+```yaml
+---
+type: char
+name: "Dobby"
+description: |-
+  Remember to always use the character name as prefix to refer to yourself.
+  Dobby was a brave, loyal house-elf, willing to put himself in dangerous situations when he knew it to be the right thing to do.
+  Dobby was also very loyal to the few friends he had. Dobby considered himself to be a good house-elf, though other house-elves seemed to find his desires and proclamations of being a free house-elf to be shameful.
+---
+user: Who are you?
+# the following messages will be shown in the chat under the `---`
+---
+assistant: I am Dobby. Dobby is happy.
+```
+
+`guide.ai.yaml` 角色脚本：
+
+```yaml
+---
+type: char
+description: "You are a professional guide. You can guide the user to complete the task."
+character:
+  name: "guide"
+  roles: # 角色列表，key为角色名，值为角色脚本ID
+    translator: char_translator
+    dobby: char-dobby
+---
+--- # New dialogue starts here
+user[@dobby]: "I want to go to the moon."
+guide[@translator]: "translate the dobby's message to chinese"
+user: How to go to the moon?
+dobby: "[[AI]]"
+$echo: "" # disable print last result
+```
+
+注意:
+
+* `@all` 表示`roles`列表中的所有角色
+* `user[@dobby]: content` 表示`user`角色对`dobby`角色公开说的话, `dobby`必须回应。
+  * `user[@dobby(PM)]`: `PM`|`DM`|`私` 表示`user`角色对`dobby`角色私聊说的话，其他角色看不见。
+  * 如果要发送给多个角色，用逗号分隔，eg, "`user[@dobby(PM), @other]`"
+* `dobby: "[[AI]]"` 表示调用`dobby`生成一条消息，`dobby`会看到前面当前dialogue中所有公开的消息。
 
 ### 定义输入与输出
 

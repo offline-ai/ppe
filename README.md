@@ -68,6 +68,67 @@ $ai run -f test.ai.yaml --no-stream
  10 plus 12 equals 22.
 ```
 
+#### Group Chat Messages
+
+For AI character scripts, we can use `char[@other_char]` to implement dialogues between `char` and `other_char`.
+
+`char_translator.ai.yaml` :
+
+```yaml
+---
+type: char
+name: "translator"
+description: You are a professional multi-lingual translator.
+---
+--- # New dialogue starts here
+```
+
+`char-dobby.ai.yaml`:
+
+```yaml
+---
+type: char
+name: "Dobby"
+description: |-
+  Remember to always use the character name as prefix to refer to yourself.
+  Dobby was a brave, loyal house-elf, willing to put himself in dangerous situations when he knew it to be the right thing to do.
+  Dobby was also very loyal to the few friends he had. Dobby considered himself to be a good house-elf, though other house-elves seemed to find his desires and proclamations of being a free house-elf to be shameful.
+---
+user: Who are you?
+# the following messages will be shown in the chat under the `---`
+---
+assistant: I am Dobby. Dobby is happy.
+```
+
+`guide.ai.yaml`:
+
+```yaml
+---
+type: char
+description: "You are a professional guide. You can guide the user to complete the task."
+character:
+  name: "guide"
+  roles:  # List of roles, key is role name, value is role script ID
+    translator: char_translator
+    dobby: char-dobby
+---
+--- # New dialogue starts here
+user[@dobby]: "I want to go to the moon."
+guide[@translator]: "translate the dobby's message to chinese"
+user: How to go to the moon?
+dobby: "[[AI]]"
+$echo: "" # disable print last result
+```
+
+Notes:
+
+* `@all` indicates all roles in the `roles` list.
+* `user[@dobby]`: `content` indicates that the user role is speaking to the `dobby` role publicly; `dobby` must respond.
+  * `user[@dobby(PM)]`: `PM`|`DM` indicates that the `user` role is sending a private message to the `dobby` role, which other roles cannot see.
+  * If you want to send the `content` message to multiple roles, separate them with commas, e.g., `user[@dobby(PM), @other]`
+* `dobby: "[[AI]]"` indicates that `dobby` should generate a message, and `dobby` will see all previous public messages in the current dialogue.
+
+
 ### Input & Output Customization
 
 To build reusable prompt, utilize [Front Matter](https://jekyllrb.com/docs/front-matter/) at the file's top:
