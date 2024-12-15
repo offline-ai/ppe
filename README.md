@@ -70,6 +70,14 @@ $ai run -f test.ai.yaml --no-stream
 
 #### Group Chat
 
+The role group chat feature enhances PPE's dialogue system with structured natural language, making it easier for multiple agents to collaborate and communicate, thus more efficiently completing complex tasks.
+
+Role group chat supports public conversations, private conversations, and multi-role conversations, making the dialogue more flexible and targeted.
+
+* Public Conversation: `user[@dobby]: ...` indicates that the `user` role is publicly speaking to the `dobby` role, and `dobby` must respond.
+* Private Conversation: `user[@dobby(私)]: ...` Parameters `PM`|`DM`|`私` all indicate that the `user` role is privately speaking to the `dobby` role, and other roles cannot see the conversation.
+* Multi-Role Conversation: To send a message to multiple roles simultaneously, separate the roles with commas, for example, `user[@dobby(PM), @other]`.
+
 For AI character scripts, we can use `char[@other_char]:` to implement dialogues between `char` and `other_char`.
 
 `char_translator.ai.yaml` :
