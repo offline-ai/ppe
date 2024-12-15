@@ -70,7 +70,7 @@ $ai run -f test.ai.yaml --no-stream
 
 #### Group Chat
 
-For AI character scripts, we can use `char[@other_char]` to implement dialogues between `char` and `other_char`.
+For AI character scripts, we can use `char[@other_char]:` to implement dialogues between `char` and `other_char`.
 
 `char_translator.ai.yaml` :
 
@@ -843,6 +843,12 @@ $match(condition[, allMatches=false]):
   _ :
     - $echo: else matched
 ```
+
+Sure, here is the translation of the provided content:
+
+* `condition`: Optional. If not specified, the condition defaults to `LastResult`.
+* `allMatches`: When enabled, it executes all matching branches, meaning all matched branch items will be executed. The default value is `false`.
+* `parallel`: Indicates whether to execute all matching branches in parallel. This is only meaningful when `allMatches` is enabled. The default value is `false`.
 
 #### `$while` directive
 

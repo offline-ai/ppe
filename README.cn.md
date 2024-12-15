@@ -76,7 +76,7 @@ $ai run -f test.ai.yaml --no-stream
 
 #### 角色群聊
 
-对于角色脚本，我们可以使用`char[@other_char]`实现char对other_char的对话。
+对于角色脚本，我们可以使用`char[@other_char]:`实现char对other_char的对话。
 
 `char_translator.ai.yaml` 角色脚本:
 
@@ -852,6 +852,10 @@ $match(condition[, allMatches=false]):
   _ :
     - $echo: else matched
 ```
+
+* `condition`: 可选项, 如果没有则是以LastResult为条件。
+* `allMatches`: 启用则执行全部匹配，也就是会执行所有匹配的分支项，默认为`false`。
+* `parallel`: 是否并发执行所有匹配的分支项，仅当启用allMatches时才有意义，默认为`false`。
 
 #### `$while` 指令
 
