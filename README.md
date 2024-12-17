@@ -74,11 +74,41 @@ The role group chat feature enhances PPE's dialogue system with structured natur
 
 Role group chat supports public conversations, private conversations, and multi-role conversations, making the dialogue more flexible and targeted.
 
-* Public Conversation: `user[@dobby]: ...` indicates that the `user` role is publicly speaking to the `dobby` role, and `dobby` must respond.
-* Private Conversation: `user[@dobby(私)]: ...` Parameters `PM`|`DM`|`私` all indicate that the `user` role is privately speaking to the `dobby` role, and other roles cannot see the conversation.
-* Multi-Role Conversation: To send a message to multiple roles simultaneously, separate the roles with commas, for example, `user[@dobby(PM), @other]`.
+* Specify conversation roles: The specified roles must be at the beginning of the message content, prefixed with the `@` character, and multiple roles are separated by commas `,`.
+* Public Conversation: `user: @dobby, ...` indicates that the `user` role is publicly speaking to the `dobby` role, and `dobby` must respond.
+* Private Conversation: `user: @dobby(PM), ...` Parameters `PM`|`DM`|`私` all indicate that the `user` role is privately speaking to the `dobby` role, and other roles cannot see the conversation.
+* Multi-Role Conversation: To send a message to multiple roles simultaneously, separate the roles with commas, for example, `user: @dobby(PM), @other, ...`.
 
-For AI character scripts, we can use `char[@other_char]:` to implement dialogues between `char` and `other_char`.
+For AI character script, we can use `@other_char` in the message to implement dialogue between `char` and `other_char`.
+
+`guide.ai.yaml`:
+
+```yaml
+---
+description: "You are a professional guide. You can guide the user to complete the task."
+name: "guide"
+roles:  # List of used roles, key is role name, value is role script ID
+  translator: char_translator
+  dobby: char-dobby
+---
+system: You are a professional guide. You can guide the user to complete the task.
+--- # New dialogue starts here
+user[@dobby]: "I want to go to the moon."
+guide[@translator]: "translate the dobby's message to chinese without explanation."
+user: How to go to the moon?
+dobby: "[[AI]]"
+$echo: "" # disable print last result
+```
+
+Notes:
+
+* The called character script must be of the `char` type.
+* The main controlling script(`guide`) does not have to be a `char` type script.
+* `@all` indicates all roles in the `roles` list.
+* `user: @dobby, ...content` indicates that the user role is speaking to the `dobby` role publicly; `dobby` must respond.
+  * `user: @dobby(PM), ...`: `PM`|`DM`|`私` indicates that the `user` role is sending a private message to the `dobby` role, which other roles cannot see.
+  * If you want to send the same `content` message to multiple roles, separate them with commas, e.g., `user: @dobby(PM), @other, ...`
+* `dobby: "[[AI]]"` indicates that `dobby` should generate a message and assigns it to the `AI` variable. `dobby` will see all previous public messages in the current dialogue.
 
 `char_translator.ai.yaml` :
 
@@ -111,35 +141,6 @@ user: Who are you?
 ---
 assistant: I am Dobby. Dobby is happy.
 ```
-
-`guide.ai.yaml`:
-
-```yaml
----
-description: "You are a professional guide. You can guide the user to complete the task."
-name: "guide"
-roles:  # List of used roles, key is role name, value is role script ID
-  translator: char_translator
-  dobby: char-dobby
----
-system: You are a professional guide. You can guide the user to complete the task.
---- # New dialogue starts here
-user[@dobby]: "I want to go to the moon."
-guide[@translator]: "translate the dobby's message to chinese without explanation."
-user: How to go to the moon?
-dobby: "[[AI]]"
-$echo: "" # disable print last result
-```
-
-Notes:
-
-* The called character script must be of the `char` type.
-* The main controlling script(`guide`) does not have to be a `char` type script.
-* `@all` indicates all roles in the `roles` list.
-* `user[@dobby]`: `content` indicates that the user role is speaking to the `dobby` role publicly; `dobby` must respond.
-  * `user[@dobby(PM)]`: `PM`|`DM` indicates that the `user` role is sending a private message to the `dobby` role, which other roles cannot see.
-  * If you want to send the same `content` message to multiple roles, separate them with commas, e.g., `user[@dobby(PM), @other]`
-* `dobby: "[[AI]]"` indicates that `dobby` should generate a message and assigns it to the `AI` variable. `dobby` will see all previous public messages in the current dialogue.
 
 
 ### Input & Output Customization
