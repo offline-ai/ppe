@@ -316,13 +316,14 @@ If you want to select one randomly from the list using the computer's local rand
 In messages, we support content substitution by invoking scripts or instructions. The script or instructions must return a string value. For example:
 
 ```yaml
-user: "#five plus two equals @calculator(5+2)"
+user: "#five plus two equals [[@calculator(5+2)]]"
 ```
 
 Notes:
 
 * The prefix `#` indicates immediate formatting of the string.
-* The prefix `@` indicates calling an external script with the ID `calculator`. To call an internal instruction, use the prefix `$`, such as `@$echo`; if there are no parameters, you must omit the parentheses.
+* **BROKEN CHANGE** External script or directive should be placed within two square brackets. The prefix `@` indicates calling an external script with the ID `calculator`. To call an internal instruction, use the prefix `$`, such as `[[@$echo]]`; if there are no parameters, you must omit the parentheses.
+  * Note that they must be placed within two square brackets, indicating the content to be replaced. In previous versions (0.5.18), square brackets were not required, but now with the addition of group chat mode, the format has been changed to distinguish between them.
 * If placed within text, ensure there is at least one space before and after. Extra spaces will be removed after substitution.
 
 Here’s an example of how to load a file and generate a summary using this method:
@@ -330,7 +331,7 @@ Here’s an example of how to load a file and generate a summary using this meth
 ```yaml
 user: |-
   Generate a summary for the following file:
-  @file(file.txt)
+  [[@file(file.txt)]]
 ```
 
 ##### Multi-turns dialogue with external agents

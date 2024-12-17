@@ -80,11 +80,12 @@ $ai run -f test.ai.yaml --no-stream
 
 角色群聊支持公开对话、私聊对话和多角色对话，使得对话更加灵活和有针对性。
 
-* 公开对话: `user[@dobby]: ...` 表示 `user` 角色对 `dobby` 角色公开说的话， `dobby` 必须回应。
-* 私聊对话: `user[@dobby(私)]: ...` 参数 `PM`|`DM`|`私` 均表示 `user` 角色对 `dobby` 角色私聊说的话，其他角色看不见。
-* 多角色对话: 如果要把消息同时发送给多个角色，角色之间用逗号分隔，例如 `user[@dobby(PM), @other]`。
+* 指定对话角色： 指定角色必须在消息内容的最前面，并加上前缀`@`字符，多个角色之间用逗号`,`分隔。
+* 公开对话: `user: "@dobby, ..."` 表示 `user` 角色对 `dobby` 角色公开说的话， `dobby` 必须回应。
+* 私聊对话: `user: "@dobby(私),..."` 参数 `PM`|`DM`|`私` 均表示 `user` 角色对 `dobby` 角色私聊说的话，其他角色看不见。
+* 多角色对话: 如果要把消息同时发送给多个角色，角色之间用逗号分隔，例如 `user: "@dobby(PM), @other ..."`。
 
-对于角色脚本，我们可以使用`char[@other_char]:`实现char对other_char的对话。
+对于角色脚本，我们在消息中使用`@other_char`实现char对other_char的对话。
 
 `char_translator.ai.yaml` 角色脚本:
 
@@ -130,8 +131,8 @@ roles: # 使用的角色列表，key为角色名，值为角色脚本ID
 ---
 system: You are a professional guide. You can guide the user to complete the task.
 --- # New dialogue starts here
-user[@dobby]: "I want to go to the moon."
-guide[@translator]: "translate the dobby's message to chinese without explanation."
+user: "@dobby, I want to go to the moon."
+guide: "@translator, translate the dobby's message to chinese without explanation."
 user: How to go to the moon?
 dobby: "[[AI]]"
 $echo: "" # disable print last result
@@ -142,9 +143,9 @@ $echo: "" # disable print last result
 * 调用方脚本必须是角色`char`类型
 * 主控方脚本(`guide`)可以不必是`char`类型脚本
 * `@all` 表示`roles`列表中的所有角色
-* `user[@dobby]: content` 表示`user`角色对`dobby`角色公开说的话, `dobby`必须回应。
-  * `user[@dobby(私)]`: `PM`|`DM`|`私` 表示`user`角色对`dobby`角色私聊说的话，其他角色看不见。
-  * 如果要把该消息同时发送给多个角色，那么角色之间用逗号分隔，eg, "`user[@dobby(PM), @other]`"
+* `user: '@dobby, ...'` 表示`user`角色对`dobby`角色公开说的话, `dobby`必须回应。
+  * `user: '@dobby(私), ...'`: `PM`|`DM`|`私` 表示`user`角色对`dobby`角色私聊说的话，其他角色看不见。
+  * 如果要把该消息同时发送给多个角色，那么角色之间用逗号分隔，eg, "`user: '@dobby(PM), @other, ...'`"
 * `dobby: "[[AI]]"` 表示调用`dobby`生成一条消息并赋值给`AI`变量，`dobby`会看到前面当前dialogue中所有公开的消息。
 
 ### 定义输入与输出
@@ -319,21 +320,22 @@ $ai run -f test.ai.yaml
 在消息中，我们支持通过调用外部脚本或指令来进行内容替换。这些脚本或指令需要返回一个字符串结果。例如：
 
 ```yaml
-user: "#五加二等于 @calculator(5+2)"
+user: "#五加二等于 [[@calculator(5+2)]]"
 ```
 
 注意事项:
 
 * 前缀`#`表示立即对字符串进行格式化处理。
-* 前缀`@`表示调用外部脚本，其ID为`calculator`。若要调用内部指令，则使用前缀`$`，如`@$echo`；若无参数，则需省略括号。
-* 若插入在文本中间，请确保前后各有一个空格。格式化后，多余的空格将被自动移除。
+* **BROKEN CHANGE** 外部脚本或指令应放于两个方括号内，前缀`@`表示调用外部脚本，其ID为`calculator`。若要调用内部指令，则使用前缀`$`，如`[[@$echo]]`；若无参数，则需省略括号。
+  * 注意，必须放置于两个方括号内，表示替换的内容。以前版本(0.5.18)是不需要加方括号的，现在加上了群聊模式，为了区分，所以更改了格式。
+* ~~若插入在文本中间，请确保前后各有一个空格。格式化后，多余的空格将被自动移除。~~
 
 现在有一个例子，是关于如何用这种方式来加载并生成文件摘要的脚本:
 
 ```yaml
 user: |-
   为下面文件生成摘要:
-  @file(file.txt)
+  [[@file(file.txt)]]
 ```
 
 ##### 外部智能体多轮交互调用方式
@@ -347,7 +349,7 @@ description: "Act as Harry Potter"
 - assistant: "你好,dobby!,我是{{name}}!"
 - $for: 3 # for 循环建立3轮对话
   do:
-    - user: "@dobby(message=true)"
+    - user: "[@dobby(message=true)]"
     - assistant: "[[AI]]" # 调用AI产生Harry Potter的回答
 ```
 
