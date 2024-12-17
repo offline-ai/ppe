@@ -323,7 +323,7 @@ user: "#five plus two equals [[@calculator(5+2)]]"
 Notes:
 
 * The prefix `#` indicates immediate formatting of the string.
-* **BROKEN CHANGE** External script or directive should be placed within two square brackets. The prefix `@` indicates calling an external script with the ID `calculator`. To call an internal instruction, use the prefix `$`, such as `[[@$echo]]`; if there are no parameters, you must omit the parentheses.
+* **BROKEN CHANGE(v0.6.0)** External script or directive should be placed within two square brackets. The prefix `@` indicates calling an external script with the ID `calculator`. To call an internal instruction, use the prefix `$`, such as `[[@$echo]]`; if there are no parameters, you must omit the parentheses.
   * Note that they must be placed within two square brackets, indicating the content to be replaced. In previous versions (0.5.18), square brackets were not required, but now with the addition of group chat mode, the format has been changed to distinguish between them.
 * If placed within text, ensure there is at least one space before and after. Extra spaces will be removed after substitution.
 
