@@ -80,6 +80,7 @@ This feature supports public dialogue, private chat, and multi-role dialogue, ma
 * The specified roles must be at the beginning of the message content, prefixed with the `@` character, and multiple roles are separated by commas `,`.
 * Public Conversation: `user[@dobby]: ...` or `user: @dobby, ...` indicates that the `user` role is publicly speaking to the `dobby` role, and `dobby` must respond.
 * Private Conversation: `user[@dobby(私)]: "..."` or `user: @dobby(PM), ...` Parameters `PM`|`DM`|`私` all indicate that the `user` role is privately speaking to the `dobby` role, and other roles cannot see the conversation.
+  * **Note**: If any role in the message includes a private parameter, the entire message is considered private, and other roles not in the list cannot see it.
 * Multi-Role Dialogue: To send a message to multiple roles simultaneously, separate the roles with commas, for example, `user: @dobby(PM), @other, ...`, `user[@dobby(PM), @other]: "..."`.
 
 Using the `@role` format in messages makes the structured dialogue more natural and easier to understand.
