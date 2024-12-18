@@ -70,16 +70,21 @@ $ai run -f test.ai.yaml --no-stream
 
 #### Group Chat
 
-The role group chat feature enhances PPE's dialogue system with structured natural language, making it easier for multiple agents to collaborate and communicate, thus more efficiently completing complex tasks.
+The group chat feature enhances PPE's dialogue system with structured natural language, making it easier for multiple agents to collaborate and communicate, thus more efficiently completing complex tasks.
 
-Role group chat supports public conversations, private conversations, and multi-role conversations, making the dialogue more flexible and targeted.
+This feature supports public dialogue, private chat, and multi-role dialogue, making conversations more flexible and targeted.
 
-* Specify conversation roles: The specified roles must be at the beginning of the message content, prefixed with the `@` character, and multiple roles are separated by commas `,`.
-* Public Conversation: `user: @dobby, ...` indicates that the `user` role is publicly speaking to the `dobby` role, and `dobby` must respond.
-* Private Conversation: `user: @dobby(PM), ...` Parameters `PM`|`DM`|`私` all indicate that the `user` role is privately speaking to the `dobby` role, and other roles cannot see the conversation.
-* Multi-Role Conversation: To send a message to multiple roles simultaneously, separate the roles with commas, for example, `user: @dobby(PM), @other, ...`.
+* Specify conversation roles:
+  1. Specify role names in square brackets immediately following the role. Separate multiple dialogue roles with commas `,`. For example, `user[@dobby]: "..."`.
+  2. Alternatively, specify roles at the beginning of the message content, prefixed with the `@` character. Separate multiple roles with commas `,`.
+* The specified roles must be at the beginning of the message content, prefixed with the `@` character, and multiple roles are separated by commas `,`.
+* Public Conversation: `user[@dobby]: ...` or `user: @dobby, ...` indicates that the `user` role is publicly speaking to the `dobby` role, and `dobby` must respond.
+* Private Conversation: `user[@dobby(私)]: "..."` or `user: @dobby(PM), ...` Parameters `PM`|`DM`|`私` all indicate that the `user` role is privately speaking to the `dobby` role, and other roles cannot see the conversation.
+* Multi-Role Dialogue: To send a message to multiple roles simultaneously, separate the roles with commas, for example, `user: @dobby(PM), @other, ...`, `user[@dobby(PM), @other]: "..."`.
 
-For AI character script, we can use `@other_char` in the message to implement dialogue between `char` and `other_char`.
+Using the `@role` format in messages makes the structured dialogue more natural and easier to understand.
+
+Below is a specific example, starting with the main script for controlling the group chat:
 
 `guide.ai.yaml`:
 
