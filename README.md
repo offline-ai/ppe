@@ -230,39 +230,63 @@ $ai run -f translator.ai.yaml '{content: "10 plus 18 equals 28.", lang: "English
   * By default, only the text content of the large model is output. If you want to return the entire content of the large model (text content and parameters), please set `llmReturnResult: .`.
   * If forced output as `JSON` (`response_format: {type: json}`) is set, then it can only be completed in one attempt, and `max_tokens` must be set according to the maximum length of the output JSON content.
 
-### Message Templates
+### Templated Message: Customize Your Interactions Easily
 
-The default message template format uses the lightweight [jinja2 template](https://en.wikipedia.org/wiki/Jinja_(template_engine)) syntax used by HuggingFace.
+#### What are Templated Messages?
 
-Templates can be pre-defined in configuration or generated dynamically during script execution.
+Templated messages are a way to generate final messages by using pre-defined "variable placeholders" within the message. Think of it like a fill-in-the-blank exercise. You provide the templated message, and the system automatically inserts the content of the variables into the text, creating a complete message.
 
-The template formatting is by default delayed until it is passed to the large model. You can perform immediate formatting by prefixing with the `#` character.
+#### Template Formats
 
-Currently supported template formats include:
+The default message template format uses the lightweight [jinja2 template](https://en.wikipedia.org/wiki/Jinja_(template_engine)) syntax used by HuggingFace. This flexible format allows you to easily customize your messages.
+
+Here are the supported template formats:
 
 * `hf`: The default template format. Alias: `huggingface`. This is the [jinja2 template](https://en.wikipedia.org/wiki/Jinja_(template_engine)) format used by `huggingface`;
-* `golang`: Alias: `localai`, `ollama`. This is the template type used by `ollama` and `localai`;
-* `fstring`: Alias: `python`, `f-string`, `langchain`. This is the format used by `langchain`.
+* `golang`: Also known as `localai`, `ollama`. This is the template type used by `ollama` and `localai`;
+* `fstring`: Also known as `python`, `f-string`, `langchain`. This is the format used by `langchain`.
+
+#### When to Use Templated Messages?
+
+Templated messages can be pre-set in configuration files or dynamically generated during script execution. Typically, the variables in a template are replaced when the message is sent to a large language model (this is called "`deferred`" replacement). If you want to format the message immediately, you can add a `#` character prefix to the relevant text.
 
 **Note:**
 
-* Templates are rendered when `$AI` is called unless prefixed with `#` for immediate formatting.
-* Data sources for templates follow this hierarchy: `function arguments` > `prompt` object > `runtime` object.
+* Templates are rendered by default when calling `$AI`, unless using the # prefix for immediate formatting.
+* The priority order for template data sources is: `function arguments` > `prompt` object > `runtime` object.
+
+#### Example
+
+Let's say you want to create a character named Dobby:
 
 Messages can be generated during configuration, eg:
 
 ```yaml
 ---
+name: Dobby
+description: |-
+  You are Dobby from the Harry Potter series.
+---
+system: "Act as {{{name}}}. {{description}}"
+```
+
+You can also place the message in a configuration file:
+
+```yaml
+---
+name: Dobby
 prompt:
   description: |-
-    You are Dobby in Harry Potter set.
+    You are Dobby from the Harry Potter series.
   messages:
     - role: system
-      content: {{description}}
+      content: "Act as {{{name}}}. {{description}}"
 ---
 ```
 
-It can also be generated during script execution, eg:
+#### Parameter Priority
+
+If the same parameter is defined in different places, the system will use it according to the following priority order: `function arguments` > `prompt object` > `runtime object`.
 
 ```yaml
 ---
@@ -270,67 +294,78 @@ prompt:
   description: |-
     You are Dobby in Harry Potter set.
 ---
-system: "{{description}}"
+- system: "{{description}}" # Default message is deferred replacement
+- $AI: # When executing $AI, the parameters in the message will be replaced.
+    # Function arguments have the highest priority and override the description defined in the prompt object
+    description: 'You are Harry Potter from Harry Potter set'
 ```
 
-Parameter priority, eg:
+### Advanced Templated Message Replacement
+
+This section describes how to use advanced replacement within your messages using double square brackets `[[ ]]`. Currently, there are three types of advanced replacements: AI replacement, Invocation replacement, and regular expression replacement.
+
+#### Advanced AI Replacement
+
+In messages, double square brackets `[[ ]]` define special template variables for advanced AI replacement. As the name suggests, the content within the square brackets will be replaced by the AI, and the value of this template variable will also be stored in the prompt object.
+
+**Example**:
 
 ```yaml
----
-prompt:
-  description: |-
-    You are Dobby in Harry Potter set.
----
-system: "{{description}}"
-$AI:
-  description: 'You are Harry Potter in Harry Potter set'  # The calling parameter has the highest priority, overwriting the description defined in the prompt object
+assistant: "Tell me a joke: [[JOKE]] I hope you like it!"
+-> $print(JOKE)
+$ret('')
 ```
 
-### Advanced Formatting
+This mechanism allows for dynamic content insertion based on the AI's response.
 
-#### Advanced AI Substitutions
-
-Use double square brackets `[[` `]]` for sophisticated AI-driven variable substitution within messages. For instance:
-
-```yaml
-assistant: "Here's a joke: [[JOKE]] Enjoy!"
-$echo: "?=prompt.JOKE"  # Accesses the AI-generated joke stored in prompt
-```
-
-This mechanism allows for dynamic content insertion based on AI responses.
-
-In this example the AI's content is stored in the `prompt.JOKE` variable. The assistant's message will also be replaced with:
+In this example, the AI's content is stored in the `prompt.JOKE` variable. However, you can directly reference the `JOKE` variable name. The assistant's message will also be replaced with:
 
 ```bash
-$ai run -f test.ai.yaml
-Here's a joke: Why don't scientists trust atoms? Because they make up everything. Enjoy!
+$ai run -f joke.ai.yaml
+joke: Tell me a joke: Why don't scientists trust atoms? Because they make up everything. I hope you like it!
+
+{
+  0: "Why don't scientists trust atoms? Because they make up everything.",
+  JOKE: "Why don't scientists trust atoms? Because they make up everything.",
+  ...
+}
 ```
 
 **Note**:
 
 * ~~Currently, only one advanced AI replacement is supported for the same message.~~
-* If there is no advanced AI replacement, the last AI return result will still be stored in `prompt.RESPONSE`, which means that there will be a `[[RESPONSE]]` template variable by default.
-* If parameters are needed, they should be placed after the colon, with multiple parameters separated by commas. eg, `[[RESPONSE:temperature=0.01,top_p=0.8]]`
+* If there is no advanced AI replacement, the previous AI return result will still be stored in `prompt.RESPONSE`, which means that there will be a default `[[RESPONSE]]` template variable.
+* If you need to add model parameters, the parameters should be placed after the variable colon, and multiple parameters should be separated by commas. For example: `[[RESPONSE:temperature=0.01,top_p=0.8]]`
 
-##### Limit AI Response to Options in a List
+##### Controlling AI Responses with Lists
 
-To restrict the AI's response to only select from a list or choose randomly from local options, use the following format: `[[FRUITS: |apple|apple|orange]]`. This means the AI can only pick one of these three: apple, apple, or orange.
+Imagine you want to make sure the AI's answer is always one of a specific set of options. You can do this using a special format: `[[FRUITS: |apple|apple|orange]]`.
 
-If you want to select one randomly from the list using the computer's local random number generator (not the AI), include the `type=random` parameter: `[[FRUITS:|apple|banana|orange:type=random]]`. You can use the shorthand version: `[[FRUITS:|apple|banana|orange:random]]`.
+This tells the AI: "Your answer must be one of these: apple, banana, or orange."
+
+**Adding Randomness (Locally)**
+
+What if you want the AI to pick a random option from the list, but you want to use your computer's random number generator, not the AI's?
+
+Add the type='random' parameter: [[FRUITS:|apple|banana|orange:type='random']].
+
+You can also shorten this to: [[FRUITS:|apple|banana|orange:random]].
 
 #### Advanced Script Invocation Formatting
 
-In messages, we support content substitution by invoking scripts or instructions. The script or instructions must return a string value. For example:
+This section explains how to use scripts or instructions to dynamically replace content within your messages. Keep in mind that these scripts or instructions need to return string results.
+
+For example:
 
 ```yaml
 user: "#five plus two equals [[@calculator(5+2)]]"
 ```
 
-Notes:
+**Important Notes**:
 
-* The prefix `#` indicates immediate formatting of the string.
-* **BROKEN CHANGE(v0.6.0)** External script or directive should be placed within two square brackets. The prefix `@` indicates calling an external script with the ID `calculator`. To call an internal instruction, use the prefix `$`, such as `[[@$echo]]`; if there are no parameters, you must omit the parentheses.
-  * Note that they must be placed within two square brackets, indicating the content to be replaced. In previous versions (0.5.18), square brackets were not required, but now with the addition of group chat mode, the format has been changed to distinguish between them.
+* The prefix `#` indicates that the string should be formatted immediately.
+* **BROKEN CHANGE(v0.6.0)** External scripts or directives should be enclosed in two square brackets. The prefix `@` indicates calling an external script with the ID `calculator`. To call an internal instruction, use the prefix `$`, such as `[[@$echo]]`; if there are no parameters, you must omit the parentheses.
+  * Remember that the content to be replaced must be placed within double square brackets. This was changed in the latest version (above `0.5.18`) due to the addition of group chat mode.
 * If placed within text, ensure there is at least one space before and after. Extra spaces will be removed after substitution.
 
 Here’s an example of how to load a file and generate a summary using this method:
@@ -341,7 +376,7 @@ user: |-
   [[@file(file.txt)]]
 ```
 
-##### Multi-turns dialogue with external agents
+##### Multi-Turn Interaction with External Agents
 
 ```yaml
 ---
@@ -352,31 +387,36 @@ description: "Act as Harry Potter"
 - assistant: "Hello, dobby! I am {{name}}!"
 - $for: 3 # Three rounds of dialogue
   do:
-    - user: "@dobby(message=true)"
+    - user: "[[@dobby(message=true)]]"
     - assistant: "[[AI]]" # call the AI as Harry Potter generate a response.
 ```
 
-#### Regular Expression (RegExp) Formatting
+#### Regular Expression (RegExp) Formatting Replacement
 
-You can use regular expressions in messages with the format `/RegExp/[opts]:VAR[:index_or_group_name]` for content replacement. For example:
+This section describes how to use regular expressions to dynamically replace content within your messages.
+
+You can use regular expressions in messages with the format [[`/RegExp/[opts]:VAR[:index_or_group_name]`]] for content replacement.
+
+**Example**:
 
 ```yaml
 user: |-
   Output the result, wrapped in '<RESULT></RESULT>'
 assistant: "[[Answer]]"
 ---
-user: "Based on the following content: /<RESULT>(.+)</RESULT>/:Answer"
+# extract the result from the wrapped response
+user: "Based on the following content: [[/<RESULT>(.+)</RESULT>/:Answer]]"
 ```
 
-Parameter descriptions:
+**Parameters**:
 
 * `RegExp`: The regular expression string
-* `opts`: Optional parameters used to specify matching options for the regular expression. For example, opts could be i, indicating case-insensitive matching.
+* `opts`: Optional parameters used to specify matching options for the regular expression. For example, opts could be `i`, indicating case-insensitive matching.
 * `VAR`: The content to replace, here it is the `Answer` variable that holds the assistant's response.
 * `index_or_group_name`: An optional parameter indicating which part of the match from the regular expression should be replaced. This can be a capture group index number (starting from 1) or a named capture group.
-  * When this parameter is absent: If there are capturing group, the default is index 1; if there are no capturing, the default is the entire match.
+  * When this parameter is not present: If the regular expression has capture groups, it defaults to index 1; if there are no capture groups, it defaults to the entire match result.
 
-Notes:
+**Important Notes**:
 
 * In the message, the regular expression must be separated from other content by spaces.
 * If there is no match, the content of `VAR` is returned directly.

@@ -232,13 +232,15 @@ $ai run -f translator.ai.yaml '{content: "10加18等于28。", lang: "中文", t
   * 默认只输出大模型的文本内容,如果希望返回大模型的全部内容(文本内容和参数),那么请设定`llmReturnResult: .`.
   * 如果设置了强制输出为`JSON`(`response_format: {type: json}`),那么就只能一次完成,不能续写,必须根据输出json内容的最大长度设置`max_tokens`.
 
-### 消息模板
+### 模板化消息 - 轻松定制你的消息
 
-默认消息模板格式采用HuggingFace使用的轻量级[jinja2模板](https://en.wikipedia.org/wiki/Jinja_(template_engine))语法。
+#### 什么是模板化消息？
 
-消息模板可在配置中预设或在脚本执行时生成。
+模板化消息是一种通过在消息中使用预定义的“`变量占位符`”来生成最终消息的方法。就像填空题一样，用户只需要提供模板化的消息，系统会自动将变量的内容插入到文本中，生成完整的消息。
 
-模板的格式化通常是在传递给大型模型时才会执行。如果你想立即进行格式化，可以在相关文本前加上`#`字符作为前缀。
+#### 模板格式
+
+模板格式默认采用的是HuggingFace使用的轻量级[jinja2模板](https://en.wikipedia.org/wiki/Jinja_(template_engine))语法，这种模板格式非常灵活，可以让你轻松地定制消息。
 
 目前支持的模板格式有:
 
@@ -246,25 +248,45 @@ $ai run -f translator.ai.yaml '{content: "10加18等于28。", lang: "中文", t
 * `golang`: 别名: '`localai`', `'ollama`'. 也是 `ollama` 和 `localai`用的模板类型;
 * `fstring`: 别名: `python`, `f-string`, `langchain`. 是 `langchain`在用的.
 
-**注意**:
+#### 何时使用模板化消息？
+
+模板化消息可以在配置文件中预设，也可以在脚本执行时动态生成。通常情况下，模板中的变量会在消息传递给大型模型时才被替换（这称为“`延后`”替换）。如果你希望立即格式化消息，可以在相关文本前加上`#`字符作为前缀。
+
+**注意事项**:
 
 * 模板默认在调用`$AI`时渲染，除非使用`#`前缀进行即时格式化。
-* 模板数据来源遵循以下优先级：`函数参数` > `prompt`对象 > `runtime`对象。
+* 模板数据来源的优先级顺序是：`函数参数` > `prompt`对象 > `runtime`对象。
 
-消息可以在配置的时候生成,eg:
+#### 示例
+
+假设你想创建一个角色Dobby，你可以这样写：
 
 ```yaml
 ---
+name: Dobby
+description: |-
+  你是《哈利·波特》系列中的Dobby。
+---
+system: "扮演{{{name}}。{{description}}"
+```
+
+你也可以将消息放在配置文件中：
+
+```yaml
+---
+name: Dobby
 prompt:
   description: |-
-    You are Dobby in Harry Potter set.
+    你是《哈利·波特》系列中的Dobby。
   messages:
     - role: system
-      content: {{description}}
+      content: "扮演{{{name}}。{{description}}"
 ---
 ```
 
-也可以在脚本运行时生成, eg:
+#### 参数优先级
+
+如果在不同的地方定义了相同的参数，系统会按照以下优先级顺序使用： `函数参数` > `prompt`对象 > `runtime`对象。
 
 ```yaml
 ---
@@ -272,23 +294,15 @@ prompt:
   description: |-
     You are Dobby in Harry Potter set.
 ---
-system: "{{description}}"
+- system: "{{description}}" # 默认消息是延后替换
+- $AI: # 当执行$AI时,消息中的参数才会被替换.
+    # 调用参数的优先级最高,覆盖了prompt对象中定义的description
+    description: 'You are Harry Potter in Harry Potter set'
 ```
 
-参数优先级:
+### 高级模板化消息替换
 
-```yaml
----
-prompt:
-  description: |-
-    You are Dobby in Harry Potter set.
----
-system: "{{description}}"
-$AI:
-  description: 'You are Harry Potter in Harry Potter set'  # 调用参数的优先级最高,覆盖了prompt对象中定义的description
-```
-
-### 高级消息格式化
+在消息中,使用两个方括号`[[ ]]`定义高级替换，目前高级替换有`AI替换`，`调用替换`和`正则替换`.
 
 #### 高级AI替换
 
@@ -296,23 +310,27 @@ $AI:
 
 ```yaml
 assistant: "讲个笑话：[[JOKE]] 希望您喜欢！"
-$echo: "?=prompt.messages[0].content"  # 访问存储于prompt中的AI生成的笑话:第一个消息的内容
+-> $print(JOKE)
+$ret('')
 ```
 
 此机制允许根据AI响应动态插入内容。
 
-在该例子中AI的内容被存放在 `prompt.JOKE` 变量中. assistant的消息也将被替换为:
+在该例子中AI的内容被存放在 `prompt.JOKE` 变量中，不过你可以直接引用`JOKE`变量名. assistant的消息也将被替换为:
 
 ```bash
-$ai run -f test.ai.yaml
-讲个笑话： Why don't scientists trust atoms? Because they make up everything. 希望您喜欢！
+$ai run -f joke.ai.yaml
+joke: 讲个笑话： Why don't scientists trust atoms? Because they make up everything. 希望您喜欢！
+
+{ 0: "Why don't scientists trust atoms? Because they make up everything."
+  JOKE: "Why don't scientists trust atoms? Because they make up everything."
+  ...
 ```
 
 **注意**:
 
-* ~~目前同一消息只支持一个高级AI替换.~~
 * 如果没有高级AI替换,上一次的大模型返回结果依然会被存放在`prompt.RESPONSE`上,也就是默认会有`[[RESPONSE]]`模板变量.
-* 如果需要添加参数，参数应放在冒号后面，多个参数之间用逗号分隔。例如：`[[RESPONSE:temperature=0.01,top_p=0.8]]`
+* 如果需要添加模型参数，参数应放在变量冒号后面，多个参数之间用逗号分隔。例如：`[[RESPONSE:temperature=0.01,top_p=0.8]]`
 
 ##### 限定 AI 回答内容为列表中的选项
 
@@ -322,7 +340,7 @@ $ai run -f test.ai.yaml
 
 #### 高级脚本调用消息替换
 
-在消息中，我们支持通过调用外部脚本或指令来进行内容替换。这些脚本或指令需要返回一个字符串结果。例如：
+在消息中，我们支持通过调用外部脚本或指令来进行内容替换。注意这些脚本或指令需要返回字符串结果。例如：
 
 ```yaml
 user: "#五加二等于 [[@calculator(5+2)]]"
@@ -354,20 +372,20 @@ description: "Act as Harry Potter"
 - assistant: "你好,dobby!,我是{{name}}!"
 - $for: 3 # for 循环建立3轮对话
   do:
-    - user: "[@dobby(message=true)]"
+    - user: "[[@dobby(message=true)]]"
     - assistant: "[[AI]]" # 调用AI产生Harry Potter的回答
 ```
 
 #### 正则表达式(RegExp)格式化替换
 
-在消息中可以使用正则表达式`/RegExp/[opts]:VAR[:index_or_group_name]`进行内容替换。例如：
+在消息中可以使用正则表达式[[`/RegExp/[opts]:VAR[:index_or_group_name]`]]进行内容替换。例如：
 
 ```yaml
 user: |-
   输出结果,并用 '<RESULT></RESULT>' 包裹
 assistant: "[[Answer]]"
 ---
-user: "基于如下的内容: /<RESULT>(.+)</RESULT>/:Answer"
+user: "基于如下的内容: [[/<RESULT>(.+)</RESULT>/:Answer]]"
 ```
 
 参数说明:
