@@ -546,7 +546,7 @@ import: # 当导入的声明是函数时会自动给没有前缀的函数名称�
 
 ```yaml
 ---
-import: "js_package_name"
+import: "js:js_package_name" # the js npm package name
 ---
 ```
 
@@ -555,9 +555,10 @@ import: "js_package_name"
 ```yaml
 ---
 import:
-  - "js_package_name"
+  - "js:js_package_name" # the js npm package name
   - "js/script/path.js": ['func1', 'func2', {func3: 'asFunc3'}] # 只导入指定的函数
-  - 'ruby-funcs.rb'
+  - 'ruby-funcs.rb' # ruby file
+  - 'rb:ruby_package'
   - "agent.ai.yaml": "asName" # 导入AI脚本函数并重命名为 "$asName"
 ---
 ```
@@ -567,7 +568,7 @@ import:
 ```yaml
 ---
 import:
-  "js_package_name": "*"
+  "js:js_package_name": "*"
   "js/script/path.js": ['func1', 'func2']
   "agent.ai.yaml": "asName"
 ---
@@ -575,7 +576,7 @@ import:
 
 **注意事项**
 
-* 如果没有提供扩展名，默认为 JavaScript 模块。
+* **BROKEN CHANGE**: ~~如果没有提供扩展名，默认为 JavaScript 模块。~~ 从通过前缀区分模块类型。js npm 模块必须加上`js:`前缀
 * 相对路径基于当前 AI 脚本所在的文件夹，而不是当前工作目录 (CWD)。
 * 当导入的声明为 `函数` 时，会自动为没有前缀的函数名添加 "$" 前缀。
 * 如果模块中存在函数`initializeModule`并且被导入,那么该函数会在模块加载后自动执行.

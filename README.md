@@ -559,7 +559,7 @@ Import one file:
 
 ```yaml
 ---
-import: "js_package_name"
+import: "js:js_package_name" # the js npm package name
 ---
 ```
 
@@ -568,9 +568,10 @@ Import many files Use Array Format:
 ```yaml
 ---
 import:
-  - "js_package_name"
+  - "js:js_package_name" # the js npm package name
   - "js/script/path.js": ['func1', 'func2', {func3: 'asFunc3'}] # Import only the specified functions
-  - 'ruby-funcs.rb'
+  - 'ruby-funcs.rb' # ruby file
+  - 'rb:ruby_package'
   - "agent.ai.yaml": "asName" # Import the script and rename it to "$asName"
 ---
 ```
@@ -588,7 +589,7 @@ import: # Object Format
 
 **Note**:
 
-* the default is js module if not extension name provided.
+* **BROKEN CHANGE**: ~~the default is js module if not extension name provided.~~ use the prefix `js:` to specify the js module name. For example, `js:js_package_name`.
 * The relative path is the folder of the current ai script, not the CWD(current working dir)
 * When the imported declaration is a function, it automatically adds the prefix "$" to function names without a prefix
 * If the function `initializeModule` exists in the module and is imported, it will be automatically executed after the module loads.
