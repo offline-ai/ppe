@@ -592,8 +592,36 @@ import: # Object Format
 * **BROKEN CHANGE**: ~~the default is js module if not extension name provided.~~ use the prefix `js:` to specify the js module name. For example, `js:js_package_name`.
 * The relative path is the folder of the current ai script, not the CWD(current working dir)
 * When the imported declaration is a function, it automatically adds the prefix "$" to function names without a prefix
-* If the function `initializeModule` exists in the module and is imported, it will be automatically executed after the module loads.
+* If the function `$initializeModule` exists in the module and is imported, it will be automatically executed after the module loads.
+* Importing the PPE script will import the `$[PPE_ID](data)` function to execute the PPE script, as well as the `$[PPE_ID].interact({message})` function for interaction.
 * Currently, only `javascript` support has been implemented.
+
+##### Export
+
+If this parameter is not specified, the script will export a command named `$[id]`.
+
+The `export` array specifies the functions that the script needs to export. It can export internal commands or external scripts.
+
+```yaml
+---
+export:
+   # Internal custom directive
+  - "$internalDirectiveName"
+  # Export $internalDirectiveName as $asName
+  - "$internalDirectiveName": "asName"
+  # Export two functions from the js:path module
+  - "js:path": ['basename', 'extname']
+  # Export the script itself, named `$[id]`
+  - "."
+---
+!fn |-
+  [js]function internalDirectiveName() {}
+```
+
+Note:
+
+* When the script contains an `export`, the script itself will be executed as an initialization function (`$initializeModule`) upon import by default, unless there is a `$initializeModule` item in the script:
+  * Setting `$initializeModule` to `false` will prevent the execution of the initialization function, or decalare the `$initializeModule` initialization function.
 
 #### Prompt configuration
 

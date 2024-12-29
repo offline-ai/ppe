@@ -579,8 +579,36 @@ import:
 * **BROKEN CHANGE**: ~~如果没有提供扩展名，默认为 JavaScript 模块。~~ 从通过前缀区分模块类型。js npm 模块必须加上`js:`前缀
 * 相对路径基于当前 AI 脚本所在的文件夹，而不是当前工作目录 (CWD)。
 * 当导入的声明为 `函数` 时，会自动为没有前缀的函数名添加 "$" 前缀。
-* 如果模块中存在函数`initializeModule`并且被导入,那么该函数会在模块加载后自动执行.
+* 如果模块中存在函数`$initializeModule`并且被导入,那么该函数会在模块加载后自动执行.
+* 默认导入PPE脚本则会导入`$[PPE_ID](data)`函数，执行PPE脚本,以及`$[PPE_ID].interact({message})`脚本交互函数
 * 当前只实现了 `javascript` 的支持
+
+##### Export
+
+如果没有该参数，那么脚本导出的就是自身名称为`$[id]`的指令.
+
+`export`数组约定脚本需要导出的函数。可以导出内部指令，也可以导出外部脚本。
+
+```yaml
+---
+export:
+   # 内部自定义的指令
+  - "$internalDirectiveName"
+  # 作为 $asName 导出$internalDirectiveName
+  - "$internalDirectiveName": "asName"
+  # 导出js path模块中的两个函数
+  - "js:path": ['basename', 'extname']
+  # 导出脚本自身，名称为 `$[id]`
+  - "."
+---
+!fn |-
+  [js]function internalDirectiveName() {}
+```
+
+注意:
+
+* 当脚本存在`export`后，默认脚本自身会在导入时作为初始化函数(`$initializeModule`)执行, 除非在`脚本`中存在`$initializeModule`项：
+  * 设置 `$initializeModule` 为 `false` 则不会执行初始化函数, 或者`$initializeModule`为一个初始化函数。
 
 #### 提示词配置
 
