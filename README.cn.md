@@ -583,6 +583,8 @@ import:
 * 默认导入PPE脚本则会导入`$[PPE_ID](data)`函数，执行PPE脚本,以及`$[PPE_ID].interact({message})`脚本交互函数
 * 当前只实现了 `javascript` 的支持
 
+新增 `ai:` 前缀约定, 表示 PPE 脚本包或目录导入。例如，`ai:package_path#id.ai.yaml`
+
 ##### Export
 
 如果没有该参数，那么脚本导出的就是自身名称为`$[id]`的指令.
