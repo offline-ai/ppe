@@ -468,12 +468,6 @@ assistant: "[[JOKE]]"
 
 **Note**: If the script returns a value of type `string`/`boolean`/`number`, that return value will be placed to the `content` field. If the return value is an `object`, its contents will be directly passed to the agent.
 
-#### Script File and Directory
-
-An agent script can be a single file or an entire directory. If it is a file, the filename must end with `.ai.yaml`. If it's a directory, it must contain a script file with the same name as the directory to serve as the entry point. Additionally, other script files within the same directory can call each other.
-
-For example, if there is a directory named `a-dir`, the entry point script should be named `a-dir/a-dir.ai.yaml`.
-
 #### Essential Tips
 
 * Script Return Value: The script's final command's output determines its return value.
@@ -526,6 +520,24 @@ system: |-
 With these simple settings, one script can inherit code and configurations from another script.
 
 ## Specifications
+
+### PPE Script Package
+
+The package name of an intelligent agent script package is the same as the directory name. The root directory of the package must contain a script file with the same name as the directory, which serves as the package entry script.
+
+For example, if there is a package directory named `a-dir`, the entry script in that directory should be named `a-dir/a-dir.ai.yaml`.
+
+The functions exported by the package are determined by the `export` configuration in the entry file.
+
+```yaml
+---
+export:
+  - "$hi"
+  - "./dobby.ai.yaml"
+---
+!fn |-
+  [js]hi() {console.log('hi')}
+```
 
 ### Front-Matter Configuration Specifications
 
