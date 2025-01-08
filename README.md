@@ -601,12 +601,15 @@ import: # Object Format
 
 **Note**:
 
+* Currently, only `javascript` and PPE script support have been implemented.
 * **BROKEN CHANGE**: ~~the default is js module if not extension name provided.~~ use the prefix `js:` to specify the js module name. For example, `js:js_package_name`.
 * The relative path is the folder of the current ai script, not the CWD(current working dir)
-* When the imported declaration is a function, it automatically adds the prefix "$" to function names without a prefix
-* If the function `$initializeModule` exists in the module and is imported, it will be automatically executed after the module loads.
-* Importing the PPE script will import the `$[PPE_ID](data)` function to execute the PPE script, as well as the `$[PPE_ID].interact({message})` function for interaction.
-* Currently, only `javascript` support has been implemented.
+* When importing, a "$" prefix will be automatically added to names without a prefix.
+* If no function names are specified during import, all functions will be imported by default. For example, `js:path`, then all path functions will be imported into the current script (functions with the same name that already exist will not be imported), and can be used in the script directly via `$basename(...)`.
+* During import, you can use `*` to indicate importing onto the package name object. For example, `"js:path": "* "`, then in the current script, use it through `$path.basename(...)`
+  * You can specify specific names to replace `*`. For example, `"js:path": "aPath"`, then in the current script, use it through `$aPath.basename(...)`
+* If the module contains a function `$initializeModule` and it is imported, this function will be executed automatically after the module is loaded.
+* Default PPE script imports will include the `$[PPE_ID](data)` function for executing PPE scripts; the `$[PPE_ID].interact({message})` function for script interaction; and items exported via the `export` configuration in the PPE script.
 
 ##### Export
 

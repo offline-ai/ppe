@@ -588,12 +588,15 @@ import:
 
 **注意事项**
 
+* 当前只实现了 `javascript` 以及PPE 脚本 的支持
 * **BROKEN CHANGE**: ~~如果没有提供扩展名，默认为 JavaScript 模块。~~ 从通过前缀区分模块类型。js npm 模块必须加上`js:`前缀
 * 相对路径基于当前 AI 脚本所在的文件夹，而不是当前工作目录 (CWD)。
-* 当导入的声明为 `函数` 时，会自动为没有前缀的函数名添加 "$" 前缀。
+* 当导入时，会自动为没有前缀的名称添加 "$" 前缀。
+* 导入时没有指定导入的函数名，则默认导入所有函数。eg， `js:path`, 那么所有path函数都会被导入到当前脚本（已经存在同名的函数不会导入）中，可以在脚本中直接通过`$basename(...)`使用。
+* 导入时，可用 `*` 表示导入在包名对象上。eg, `"js:path": "*"`, 那么在当前脚本中通过`$path.basename(...)`使用
+  * 可以指定特定的名称替换 `*`。eg, `"js:path": "aPath"`, 那么在当前脚本中通过`$aPath.basename(...)`使用
 * 如果模块中存在函数`$initializeModule`并且被导入,那么该函数会在模块加载后自动执行.
-* 默认导入PPE脚本则会导入`$[PPE_ID](data)`函数，执行PPE脚本,以及`$[PPE_ID].interact({message})`脚本交互函数
-* 当前只实现了 `javascript` 的支持
+* 默认导入PPE脚本则会导入`$[PPE_ID](data)`函数，该函数用于执行PPE脚本;还有`$[PPE_ID].interact({message})`脚本交互函数;以及PPE脚本中通过`export`配置导出的项目。
 
 新增 `ai:` 前缀约定, 表示 PPE 脚本包或目录导入。脚本包可以包括ppe脚本或`.ai.js`文件。例如，`ai:package_path#id.ai.yaml`, `ai:package_path#./some.ai.js`
 
