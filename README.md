@@ -633,7 +633,7 @@ export:
 Note:
 
 * When the script contains an `export`, the script itself will be executed as an initialization function (`$initializeModule`) upon import by default, unless there is a `$initializeModule` item in the script:
-  * Setting `$initializeModule` to `false` will prevent the execution of the initialization function, or decalare the `$initializeModule` initialization function.
+  * Setting `$initializeModule` to `false` will prevent the execution of the initialization function, or decalare the `$initializeModule` initialization directive by yourself.
 
 #### Prompt configuration
 

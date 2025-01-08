@@ -621,8 +621,8 @@ export:
 
 注意:
 
-* 当脚本存在`export`后，默认脚本自身会在导入时作为初始化函数(`$initializeModule`)执行, 除非在`脚本`中存在`$initializeModule`项：
-  * 设置 `$initializeModule` 为 `false` 则不会执行初始化函数, 或者`$initializeModule`为一个初始化函数。
+* 当脚本存在`export`后，默认脚本会把自身作为导入时的初始化函数(`$initializeModule`)执行, 除非在`脚本`中存在`$initializeModule`项：
+  * 设置 `$initializeModule` 为 `false` 则禁用该行为，不会执行初始化函数；或者设置`$initializeModule`为一个初始化函数。
 
 #### 提示词配置
 
