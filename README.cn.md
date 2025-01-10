@@ -53,11 +53,13 @@ system: "您是一位AI助手。"
 
 ```yaml
 system: "您是一位AI助手。"
----                     # 这里为第一个对话的起点,而分隔线上面的对话内容可以当作系统提示词,它们不会被输出或记录.
+# 下面为第一个对话的起点,而分隔线上面的对话内容会被隐藏，可以当作系统提示词,它们不会被输出或记录.
+---
 "10加18等于多少？"
 assistant: "[[result]]" # 执行AI,替换为AI传回的结果result
 $print: "?=result"      # 打印大模型传回的结果
----                     # 开始新对话,回到第一次的起点
+# 下面开始新对话,回到第一次的起点
+---
 user: "10加12等于多少？"
 assistant: "[[result]]" # 执行AI,替换为AI传回的结果result
 ```
@@ -225,12 +227,21 @@ $ai run -f translator.ai.yaml
 $ai run -f translator.ai.yaml '{content: "10加18等于28。", lang: "中文", target: "English"}'
 ```
 
+#### 响应输出格式类型(response_format.type)
+
+1. 文本格式,当没有设置`response_format.type`时，则为原始文本输出
+2. Json 文本格式，当设置`response_format.type`为`json`时，则会将文本视作json格式, 并强制转为JSON对象输出,如果无法转换，则会抛出错误信息。
+3. [NObj(Natural Object)](./natural-language-object.cn.md) 格式，当设置`response_format.type`为`nobj`时，则会将文本视作NObj格式，则会强制尝试使用NObj格式输出JSON。
+
 **注意:**
 
 * `input` 可以约定输入项中哪些是必填项. 其中 `index` 为可选的基于位置的参数索引。
 * `output` 是用 [JSON Schema 规范](https://json-schema.org/)约定的输出
   * 默认只输出大模型的文本内容,如果希望返回大模型的全部内容(文本内容和参数),那么请设定`llmReturnResult: .`.
   * 如果设置了强制输出为`JSON`(`response_format: {type: json}`),那么就只能一次完成,不能续写,必须根据输出json内容的最大长度设置`max_tokens`.
+* NObj 格式是近似自然语言的结构化简单对象格式，详细介绍参阅： [Natural Language Object](./natural-language-object.cn.md)
+* **forceJson** 默认为`true`,会当强制转换为Json的时候,如果转换失败,则会抛出错误信息。当设置为`false`,如果转换失败,则会返回原始文本。
+  * 对响应输出格式类型 `NObj` 和 `json` 都有效。
 
 ### 模板化消息 - 轻松定制你的消息
 
