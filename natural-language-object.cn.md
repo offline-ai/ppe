@@ -26,6 +26,8 @@
 name: John Doe
 age: 30
 city: New York
+# 数组值
+tags: developer, engineer
 ```
 
 **NOBJ 表示简单数组**:
@@ -42,5 +44,7 @@ city: New York
 
 **备注**：
 
-NOBJ  还在开发阶段，具体语法规则和解析方式后续会进一步完善。
-
+* NOBJ  还在开发阶段，具体语法规则和解析方式后续会进一步完善。
+* 字符串值不包括换行符。
+* 数组值用逗号分隔
+* 如果 `key` 中包含空格，那么返回的json对象中 `key`中的空格会被替换为 `_`。
