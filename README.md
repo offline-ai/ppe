@@ -223,12 +223,24 @@ running with your own input:
 $ai run -f translator.ai.yaml '{content: "10 plus 18 equals 28.", lang: "English", target: "Chinese"}'
 ```
 
+#### Response Output Format Type (`response_format.type`)
+
+1. **Text Format**: If `response_format.type` is not set, the output will be in plain text format.
+2. **JSON Text Format**: When `response_format.type` is set to `json`, the text will be treated as JSON format and forcibly converted to a JSON object for output. If conversion fails, an error message will be thrown.
+3. **YAML Text Format**: When `response_format.type` is set to `yaml`, the text will be treated as YAML format and forcibly converted to a JSON object for output. If conversion fails, an error message will be thrown.
+4. **NObj (Natural Object) Format**: When `response_format.type` is set to `nobj`, the text will be treated as NObj format and forcibly converted to output JSON using NObj formatting.
+
 **Note:**
 
-* `input` can specify which input items are required. The `index` is an optional positional parameter index.
-* `output` specifies the output using the [JSON Schema specification](https://json-schema.org/)
-  * By default, only the text content of the large model is output. If you want to return the entire content of the large model (text content and parameters), please set `llmReturnResult: .`.
-  * If forced output as `JSON` (`response_format: {type: json}`) is set, then it can only be completed in one attempt, and `max_tokens` must be set according to the maximum length of the output JSON content.
+- `input` can specify which input items are required. The `index` is an optional positional parameter index.
+- `output` is defined using the [JSON Schema specification](https://json-schema.org/).
+  - By default, only the text content returned by the large model is output. If you want to return the entire response from the large model (both text content and parameters), set `llmReturnResult: .`.
+  - If you set the output format to force `JSON` (`response_format: {type: json}`), the response must be completed in one go; no continuation is allowed. You must set `max_tokens` based on the maximum length of the JSON content.
+  - When using this variable in a message template `{{output}}`, it will default to natural language format.
+    - You can disable this behavior by setting the `naturalOutput` parameter to `false` in `parameters`. Disabling this will cause the message template to output as a `JSON` string.
+- `NObj` format is a simple structured object format that approximates natural language. For more details, refer to: [Natural Language Object](./natural-language-object.md)
+- **forceJson** forces the output to be converted to a JSON object, defaults to `true`. If conversion fails, an error will be thrown. When set to `false`, if conversion fails, the original text will be returned.
+  - This applies to response output formats `NObj` and `json`.
 
 ### Templated Message: Customize Your Interactions Easily
 
@@ -684,21 +696,23 @@ $on:
     (event, part, content) { const current_text = part.content }
 ```
 
-### String conventions
+### String Prefix Conventions
 
 * `~` prefix: indicates never format string, eg, "`~{{description}}`"
-* `#` prefix: indicates immediate format string, eg, "`#{{description}}`"
-* ~~`$` prefix: call command without parameters, eg, "`$AI`"~~ deprecated
-* ~~`$!` prefix: use the return value of the command without parameters as the message~~
+* `!` prefix: indicates immediate format string, eg, "`!{{description}}`". The old ~~`#`~~ deprecated since v0.9.0.
+  * ~~`$` prefix: call command without parameters, eg, "`$AI`"~~ deprecated
+  * ~~`$!` prefix: use the return value of the command without parameters as the message~~
 * If the function return value message is a string, and the first character of the message is "#", it means to format the message immediately
 * `?=` Prefix: indicates expression
-* If the expression result is a string and starts with "#", it means to format the expression result immediately
-* `:[-1:role]Message`: replace the message. The index of the message can be specified in the square brackets. The default is the last message. If it is 0, the first message is replaced. If it is a negative number, the replacement starts from the last message, such as `[-1]` to replace the last message
-* The role parameter can be omitted. Omitting it means keeping the role unchanged. `!:[-1]Message`
-* Square brackets and numbers can be omitted, such as `!:Message`. After omitting, the last message is replaced
-* If it is `!:#Message`, it means to format the message immediately
-* `+[-1:role]Message`: Add a message at the specified position. If the position is a negative number, it will be inserted from the last message. The position can be omitted. After omitting it, the message is added at the end. The message role is in the square brackets and can be set to `system`, `assistant`. The default is `user`. It can be omitted as: `!+Message`
-* If it is `!+#Message` Indicates to format the message immediately
+  * If the expression result is a string and starts with "!", it means to format the expression result immediately
+* `#:` or `#+` Prefix: replace or add message The old ~~`!:` or `!+` ~~ deprecated since v0.9.0.
+  * When it is a message itself, the prefix `#` can be omitted.
+  * `#[-1:role]Message`: replace the message. The index of the message can be specified in the square brackets. The default is the last message. If it is 0, the first message is replaced. If it is a negative number, the replacement starts from the last message, such as `[-1]` to replace the last message
+    * The role parameter can be omitted. Omitting it means keeping the role unchanged. `#:[-1]Message`
+    * Square brackets and numbers can be omitted, such as `#:Message`. After omitting, the last message is replaced
+    * If it is `#:!Message`, it means to format the message immediately
+  * `#+[-1:role]Message`: Add a message at the specified position. If the position is a negative number, it will be inserted from the last message. The position can be omitted. After omitting it, the message is added at the end. The message role is in the square brackets and can be set to `system`, `assistant`. The default is `user`. It can be omitted as: `#+Message`
+    * If it is `#+!Message` Indicates to format the message immediately
 * If the string does not contain the above prefix, or there is a formatting problem, it is considered as a new message for the user role.
 
 #### Expression

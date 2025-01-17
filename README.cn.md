@@ -230,17 +230,20 @@ $ai run -f translator.ai.yaml '{content: "10加18等于28。", lang: "中文", t
 #### 响应输出格式类型(response_format.type)
 
 1. 文本格式,当没有设置`response_format.type`时，则为原始文本输出
-2. Json 文本格式，当设置`response_format.type`为`json`时，则会将文本视作json格式, 并强制转为JSON对象输出,如果无法转换，则会抛出错误信息。
-3. [NObj(Natural Object)](./natural-language-object.cn.md) 格式，当设置`response_format.type`为`nobj`时，则会将文本视作NObj格式，则会强制尝试使用NObj格式输出JSON。
+2. JSON 文本格式，当设置`response_format.type`为`json`时，则会将文本视作json格式, 并强制转为JSON对象输出,如果无法转换，则会抛出错误信息。
+3. YAML 文本格式，当设置`response_format.type`为`yaml`时，则会将文本视作YAML格式, 并强制转为JSON对象输出,如果无法转换，则会抛出错误信息。
+4. [NObj(Natural Object)](./natural-language-object.cn.md) 格式，当设置`response_format.type`为`nobj`时，则会将文本视作NObj格式，则会强制尝试使用NObj格式输出JSON。
 
 **注意:**
 
 * `input` 可以约定输入项中哪些是必填项. 其中 `index` 为可选的基于位置的参数索引。
 * `output` 是用 [JSON Schema 规范](https://json-schema.org/)约定的输出
-  * 默认只输出大模型的文本内容,如果希望返回大模型的全部内容(文本内容和参数),那么请设定`llmReturnResult: .`.
+  * 默认只输出大模型返回的文本内容,如果希望返回大模型的全部内容(文本内容和参数),那么请设定`llmReturnResult: .`.
   * 如果设置了强制输出为`JSON`(`response_format: {type: json}`),那么就只能一次完成,不能续写,必须根据输出json内容的最大长度设置`max_tokens`.
-* NObj 格式是近似自然语言的结构化简单对象格式，详细介绍参阅： [Natural Language Object](./natural-language-object.cn.md)
-* **forceJson** 默认为`true`,会当强制转换为Json的时候,如果转换失败,则会抛出错误信息。当设置为`false`,如果转换失败,则会返回原始文本。
+  * 当在消息模板中使用该变量时`{{output}}`,默认会以自然语言的格式输出。
+    * 可以通过在`parameters`设置参数`naturalOutput`为`false`禁用该功能。禁用后该消息模板会以`JSON`字符串的形式输出。
+* `NObj` 格式是近似自然语言的结构化简单对象格式，详细介绍参阅： [Natural Language Object](./natural-language-object.cn.md)
+* **forceJson** 强制将输出转换为JSON对象，默认为`true`, 当强制转换失败,则会抛出错误信息。当设置为`false`,如果转换失败,则会返回原始文本。
   * 对响应输出格式类型 `NObj` 和 `json` 都有效。
 
 ### 模板化消息 - 轻松定制你的消息
@@ -684,21 +687,23 @@ $on:
     (event, part, content) { const current_text = part.content }
 ```
 
-### 字符串约定规范
+### 字符串前缀约定
 
 * `~` 前缀: 表示不对接着的字符串进行格式化,原样返回, eg, "`~{{description}}`"
-* `#` 前缀: 表示立即进行 format string, eg, "`#{{description}}`"
+* `!` 前缀: 表示立即进行 format string, eg, "`!{{description}}`"  以前的 ~~`#`~~ 前缀从版本`v0.9.0`开始被废弃。
 * ~~`$` 前缀: 无参数指令调用, eg, "`$AI`"~~ deprecated
-* ~~`$!`前缀: 把无参数指令的返回值作为消息~~
-  * 如果是函数返回值消息是字符串,并且作为消息的第一个字符为"#" 表示立即格式化消息
+* ~~`$#`前缀: 把无参数指令的返回值作为消息~~
+  * 如果是函数返回值消息是字符串,并且作为消息的第一个字符为"!" 表示立即格式化消息
 * `?=` 前缀: 表示表达式
   * 如果表达式结果是字符串,并且以"#"开头,则表示立即格式化表达式结果
-* `:[-1:role]Message`: 替换消息,方括号中可以指定消息的索引,默认为最后一条消息,如果为0则替换第一条消息,如果为负数则从倒数第几条开始替换,如`[-1]`则替换最后一条消息
-  * role角色参数可以省略, 省略为保持角色不变, `!:[-1]Message`
-  * 方括号和数字可以省略,如`!:Message`,省略后为替换最后一条消息
-  * 如果是`!:#Message` 表示立即格式化消息
-* `+[-1:role]Message`: 在指定位置新增消息,位置如果为负数则从倒数第几条开始插入, 位置可以省略,省略后为在最后处新增消息, 方括号内为消息角色,可以设置为`system`,`assistant`,默认为`user`,可以省略为: `!+Message`
-  * 如果是`!+#Message` 表示立即格式化消息
+* `#:` or `#+` 以前的 ~~`!:` or `!+`~~ 前缀从版本`v0.9.0`开始被废弃。
+  * 当本身是消息的话, 前缀`#`可以省略
+  * `:[-1:role]Message`: 替换消息,方括号中可以指定消息的索引,默认为最后一条消息,如果为0则替换第一条消息,如果为负数则从倒数第几条开始替换,如`[-1]`则替换最后一条消息
+    * role角色参数可以省略, 省略为保持角色不变, `#:[-1]Message`
+    * 方括号和数字可以省略,如`#:Message`,省略后为替换最后一条消息
+    * 如果是`#:!Message` 表示立即格式化消息
+  * `+[-1:role]Message`: 在指定位置新增消息,位置如果为负数则从倒数第几条开始插入, 位置可以省略,省略后为在最后处新增消息, 方括号内为消息角色,可以设置为`system`,`assistant`,默认为`user`,可以省略为: `!+Message`
+    * 如果是`#+!Message` 表示立即格式化消息
 * 如果字符串中没有上述前缀，或者出现格式问题，就视作用户角色的新增消息。
 
 #### 表达式
