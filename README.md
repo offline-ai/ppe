@@ -675,6 +675,7 @@ parameters:
   response_format:
   type: json_object
   minTailRepeatCount: 7 # Minimum number of tail repetitions, default is 7, For stream mode only, when the tail sequence returned by the large model response is detected to be repeated 4 times in a row, the response will stop. Set to 0 for no detection.
+  SystemTemplate: 'qwen2.5' # If not set, it will automatically detect and use the system template corresponding to the model. Setting it to a string forces the use of the system template for that model. You can also directly specify the system template via an object: `id` is the template ID; `version` is optional, representing the feature version of the template.
 llmStream: true # Default true, Enable streaming response for large models. Note that some backends may not support streaming response.
 autoRunLLMIfPromptAvailable: true # Default is true, which means that when there is a prompt message in the script and no `$AI` is called until the end of the script, the script will automatically execute `$AI` at the end
 forceJson: null # Default is null, indicating whether to force the output of json object, which is automatically determined by `response_format.type` and `output`: when both of them exist at the same time, the output is forced to be json.

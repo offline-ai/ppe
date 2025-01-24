@@ -666,6 +666,7 @@ parameters:
   response_format:
     type: json_object
   minTailRepeatCount: 7 # 最少尾部重复次数, 默认为7, For stream mode only, 当检测到大模型响应返回的尾部序列连续重复4次,就停止响应. 设置为0则不检测.
+  SystemTemplate: 'qwen2.5' # 如果不设置默认会自动检测使用模型对应的系统模板，设置为字符串后强制使用该模型的系统模板. 也可通过对象直接指定系统模板: `id`为模板id；`version`可选，为该模板的功能版本。
 llmStream: true # 默认true, 启用大模型流式响应,注意,可能有的后端并不支持流式响应.
 autoRunLLMIfPromptAvailable: true # 默认true, 表示当脚本中存在提示消息并且一直到脚本结束也没有执行调用过`$AI`,那么脚本会自动在结束时执行`$AI`
 forceJson: null # 默认为null,表示是否强制输出json对象, 由`response_format.type`和`output`自动决定: 当它们两个配置同时存在的时候就强制输出为json.
