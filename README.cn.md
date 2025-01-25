@@ -665,6 +665,7 @@ parameters:
   timeout: 30000 # 设置响应30秒(单位是ms)超时,不设置就默认为120秒.
   response_format:
     type: json_object
+    conversionScope: 'message' # 默认为'message' 则表示参与转换的json内容为整个助手消息内容; 'response'，表示参与转换json内容仅为AI响应内容。
   minTailRepeatCount: 7 # 最少尾部重复次数, 默认为7, For stream mode only, 当检测到大模型响应返回的尾部序列连续重复4次,就停止响应. 设置为0则不检测.
   SystemTemplate: 'qwen2.5' # 如果不设置默认会自动检测使用模型对应的系统模板，设置为字符串后强制使用该模型的系统模板. 也可通过对象直接指定系统模板: `id`为模板id；`version`可选，为该模板的功能版本。
 llmStream: true # 默认true, 启用大模型流式响应,注意,可能有的后端并不支持流式响应.
