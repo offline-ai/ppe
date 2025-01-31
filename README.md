@@ -565,7 +565,8 @@ For details on input and output and input default value configuration, please re
 ---
 _id: Needless to say, the unique identification of the script
 type: script type, `char` represents the role type; `type` indicates that the script itself is a type, with `_id` being the type name.
-description: description of the script
+title: The title of the script(single-line)
+description: multi-lines description of the script
 templateFormat: "The template format of this script, by default: `hf`, which is the jinja2 template format used by huggingface; `golang` is also the template type used by `ollama` and `localai`; `fstring` is also used by `langchain`."
 contentType: Ignore, all here are `script`
 modelPattern: Models supported by this script, through matching rules

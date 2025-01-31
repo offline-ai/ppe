@@ -545,7 +545,8 @@ export:
 ---
 _id: 不用说了,该脚本的唯一识别标识
 type: 脚本类型, `char` 表示脚色类型；`type` 表示该脚本本身就是是一个类型，其_id为类型名。
-description: 该脚本的说明
+title: 该脚本的标题(单行)
+description: 该脚本的多行说明
 templateFormat: "该脚本的模板格式,默认为: `hf`, 也就是huggingface用的jinja2模板格式; `golang` 也是 `ollama` 和 `localai`用的模板类型; `fstring` 也是 `langchain`在用的."
 contentType: 忽略,这里都是`script`
 modelPattern: 该脚本支持的模型,通过匹配规则
