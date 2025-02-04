@@ -531,6 +531,7 @@ tools:
 ---
 user: 现在几点了？今天上海的天气如何？
 #智能体会根据配置的tools调用对应的工具: now, weather,并返回结果
+assistant: "[[Answer]]"
 ```
 
 注意：
