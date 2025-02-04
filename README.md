@@ -162,7 +162,10 @@ input:       # the input items
   # Language of the content to be translated, default is "auto" for automatic detection
   - lang
   # Required, the content to be translated
-  - content: {required: true, index: 0}
+  - content:
+      required: true
+      index: 0
+      description: The content to be translated
   # Required, Target language
   - target: {required: true}
 output:
