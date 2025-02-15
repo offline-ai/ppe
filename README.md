@@ -741,6 +741,33 @@ $on:
     (event, part, content) { const current_text = part.content }
 ```
 
+##### Thought Mode Configuration (shouldThink)
+
+`shouldThink` determines whether to enable the thought mode and configures the type of thought mode.
+
+* **Type**: boolean, mode name, or mode configuration object
+* **Description**: Determines whether to enable the thought mode and configures the type of thought mode.
+  * true: Enables the default thought mode: last.
+  * Supported thought modes:
+    * `off`: Disables the thought mode.
+    * `last`: Answers first, then thinks.
+    * `first`: Thinks first, then answers.
+    * `deep`: Thinks deeply before answering.
+  * Mode configuration object:
+    * `mode`: Type of thought mode (required).
+    * `visible`: Whether to display the thought process (optional, default true).
+    * `depth`: Maximum depth of thinking (optional).
+    * `steps`: Maximum number of thinking steps (optional).
+    * `thinkTag`: Tag for thought content. Used to mark text in the thinking process (optional).
+    * `answerTag`: Tag for answer content. Used to mark the final answer text (optional).
+* **Purpose**:
+  * Control the AI's thinking behavior when processing requests to adapt to different application scenarios and needs.
+  * Provide flexible configuration options so developers can adjust AI behavior according to specific requirements.
+* **Behavior**:
+  * When `shouldThink` is set to true or a mode name, the AI will execute the corresponding thinking logic based on the specified mode.
+  * If a mode configuration object is provided, the AI will further refine its thinking behavior based on the parameters in the configuration object.
+  * If `shouldThink` is set to `false` or `off`, the AI will not perform any additional thinking logic and will return results directly.
+
 ### String Prefix Conventions
 
 * `~` prefix: indicates never format string, eg, "`~{{description}}`"
