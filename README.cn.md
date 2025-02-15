@@ -230,12 +230,53 @@ $ai run -f translator.ai.yaml
 $ai run -f translator.ai.yaml '{content: "10加18等于28。", lang: "中文", target: "English"}'
 ```
 
-#### 响应输出格式类型(response_format.type)
+#### 特殊的输入参数
+
+当使用某些特定名称定义参数时，它们具有特殊含义：
+
+##### keepOrginal 参数
+
+是否保留转换前的原始文本
+
+* **类型**: `boolean` or `string`
+* **描述**: 表示是否保留原始文本，默认值为 `false`
+  * 如果设置为 `true`，原始文本将存储在返回结果的 `_original` 字段中。
+  * 如果 `keepOriginal` 是字符串，则原始文本将存储在该字符串指定的字段中。
+* **目的**: 该参数允许用户控制返回结果中是否包含原始文本。
+* **行为**:
+  * 当设置为 `true` 时，系统会自动在预定义字段 `_original` 中包含原始文本。
+  * 当设置为字符串时，系统会根据提供的字符串值，将原始文本存储在自定义字段中。
+* **使用方法**:
+  * 若要使用默认字段名保留原始文本，将 `keepOriginal` 设置为 `true`。
+  * 若要在自定义字段中保留原始文本，将 `keepOriginal` 设置为所需的字段名称（作为字符串）。
+* 注意:
+  * 该字段是不可枚举的。
+  * 如果结果对象中已经有同名字段，`keepOriginal` 的功能将失效，即不会覆盖保存原始文本。
+
+##### keepThinking 参数
+
+当LLM模型或提示支持思考模式时，该参数可以控制是否保留思考过程。
+
+* **类型**: `boolean` or `string`
+* **描述**: 是否保留思考过程。默认值为 `false`
+  * 如果设置为 `true`，思考过程将存储在返回结果的 `_thinking` 字段中。
+  * 如果 `keepThinking` 是字符串，则思考过程将存储在该字符串指定的字段中。
+* **目的**: 该参数允许用户控制返回结果中是否包含思考过程。
+* **行为**:
+  * 当设置为 `true` 时，系统会自动在预定义字段 `_thinking` 中包含原始文本。
+  * 当设置为字符串时，系统会根据提供的字符串值，将思考过程存储在自定义字段中。
+* **使用方法**:
+  * 若要使用默认字段名保留思考过程，将 `keepThinking` 设置为 `true`。
+  * 若要在自定义字段中保留思考过程，将 `keepThinking` 设置为所需的字段名称（作为字符串）。
+* 注意:
+  * 如果结果对象中已经有同名字段，`keepThinking` 的功能将失效，即不会覆盖保存思考过程。
+
+#### 响应结构化输出格式类型(response_format.type)
 
 1. 文本格式,当没有设置`response_format.type`时，则为原始文本输出
 2. JSON 文本格式，当设置`response_format.type`为`json`时，则会将文本视作json格式, 并强制转为JSON对象输出,如果无法转换，则会抛出错误信息。
 3. YAML 文本格式，当设置`response_format.type`为`yaml`时，则会将文本视作YAML格式, 并强制转为JSON对象输出,如果无法转换，则会抛出错误信息。
-4. [NObj(Natural Object)](./natural-language-object.cn.md) 格式，当设置`response_format.type`为`nobj`时，则会将文本视作NObj格式，则会强制尝试使用NObj格式输出JSON。
+4. [NObj(Natural Object)](./natural-language-object.cn.md) 格式，当设置`response_format.type`为`nobj`时，则会将文本视作NObj格式，并强制尝试使用NObj格式转换为JSON对象。
 
 **注意:**
 
@@ -247,7 +288,8 @@ $ai run -f translator.ai.yaml '{content: "10加18等于28。", lang: "中文", t
     * 可以通过在`parameters`设置参数`naturalOutput`为`false`禁用该功能。禁用后该消息模板会以`JSON`字符串的形式输出。
 * `NObj` 格式是近似自然语言的结构化简单对象格式，详细介绍参阅： [Natural Language Object](./natural-language-object.cn.md)
 * **forceJson** 强制将输出转换为JSON对象，默认为`true`, 当强制转换失败,则会抛出错误信息。当设置为`false`,如果转换失败,则会返回原始文本。
-  * 对响应输出格式类型 `NObj` 和 `json` 都有效。
+  * 仅当存在`ouput`规范以及响应输出格式才有效。
+  * 对响应输出格式类型 `NObj`, `yaml` 和 `json` 都有效。
 
 ### 模板化消息 - 轻松定制你的消息
 

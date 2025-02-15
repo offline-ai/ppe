@@ -148,7 +148,6 @@ user: Who are you?
 assistant: I am Dobby. Dobby is happy.
 ```
 
-
 ### Input & Output Customization
 
 To build reusable prompt, utilize [Front Matter](https://jekyllrb.com/docs/front-matter/) at the file's top:
@@ -226,6 +225,45 @@ running with your own input:
 $ai run -f translator.ai.yaml '{content: "10 plus 18 equals 28.", lang: "English", target: "Chinese"}'
 ```
 
+#### Special Input Parameters
+
+When certain specific names are used to define parameters, they carry special meanings:
+
+##### keepOrginal Parameter
+
+* **Type**: `boolean` or `string`
+* **Description**: Indicates whether the original text should be retained. The default value is `false`.
+  * If set to `true`, the original text will be stored in the `_original` field of the returned result.
+  * If `keepOriginal` is a string, the original text will be stored in the field specified by that string.
+* **Purpose**: This parameter allows users to control the retention of the original text within the returned result.
+* **Behavior**:
+  * When set to `true`, the system automatically includes the original text in a predefined field named `_original`.
+  * When set to a `string`, the system stores the original text in a custom field specified by the provided string value.
+* **Usage**:
+  * To retain the original text with the default field name, set `keepOriginal` to `true`.
+  * To retain the original text in a custom field, set `keepOriginal` to the desired field name as a string.
+* **Note**:
+  * This field is non-enumerable.
+  * If the result object already contains a field with the same name, the `keepOriginal` functionality will be disabled, meaning the original text will not be overwritten.
+
+##### keepThinking Parameter
+
+When the LLM model or prompt supports thinking mode, this parameter controls whether to retain the thinking process.
+
+* **Type**: `boolean` or `string`
+* **Description**: Controls whether to retain the thinking process. Default is `false`.
+  * If set to `true`, the thinking process will be stored in the `_thinking` field of the returned result.
+  * If `keepThinking` is a string, the thinking process will be stored in the field specified by that string.
+* **Purpose**: This parameter allows users to control whether the thinking process is included in the returned result.
+* **Behavior**:
+  * When set to `true`, the system automatically includes the original thinking process in the predefined `_thinking` field.
+  * When set to a string, the system stores the thinking process in a custom field based on the provided string value.
+* **Usage**:
+  * To retain the thinking process using the default field name, set `keepThinking` to `true`.
+  * To retain the thinking process in a custom field, set `keepThinking` to the desired field name (as a string).
+* **Note**:
+  * If the result object already contains a field with the same name, the `keepThinking` functionality will not overwrite it and will be ineffective.
+
 #### Response Output Format Type (`response_format.type`)
 
 1. **Text Format**: If `response_format.type` is not set, the output will be in plain text format.
@@ -243,7 +281,8 @@ $ai run -f translator.ai.yaml '{content: "10 plus 18 equals 28.", lang: "English
     - You can disable this behavior by setting the `naturalOutput` parameter to `false` in `parameters`. Disabling this will cause the message template to output as a `JSON` string.
 - `NObj` format is a simple structured object format that approximates natural language. For more details, refer to: [Natural Language Object](./natural-language-object.md)
 - **forceJson** forces the output to be converted to a JSON object, defaults to `true`. If conversion fails, an error will be thrown. When set to `false`, if conversion fails, the original text will be returned.
-  - This applies to response output formats `NObj` and `json`.
+  - This only takes effect when there is an `output` specification and the response output format is defined.
+  - This applies to response output formats `NObj`, `yaml` and `json`.
 
 ### Templated Message: Customize Your Interactions Easily
 
