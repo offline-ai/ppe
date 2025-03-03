@@ -690,13 +690,14 @@ import:
 import:
   "js:js_package_name": "*"
   "js/script/path.js": ['func1', 'func2']
+  "my.ai.wasm": "*"
   "agent.ai.yaml": "asName"
 ---
 ```
 
 **注意事项**
 
-* 当前只实现了 `javascript` 以及PPE 脚本 的支持
+* 当前只实现了 `javascript`, `wasm` 以及 `PPE AI`脚本 的支持
 * **BROKEN CHANGE**: ~~如果没有提供扩展名，默认为 JavaScript 模块。~~ 从通过前缀区分模块类型。js npm 模块必须加上`js:`前缀
 * 相对路径基于当前 AI 脚本所在的文件夹，而不是当前工作目录 (CWD)。
 * 当导入时，会自动为没有前缀的名称添加 "$" 前缀。

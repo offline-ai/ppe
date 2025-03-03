@@ -650,13 +650,14 @@ Use Object Format:
 import: # Object Format
   "js_package_name": "*"
   "js/script/path.js": ['func1', 'func2']
+  "my.ai.wasm": "*"
   "agent.ai.yaml": "asName"
 ---
 ```
 
 **Note**:
 
-* Currently, only `javascript` and PPE script support have been implemented.
+* Currently, only `javascript`, `wasm` and `PPE AI` script support have been implemented.
 * **BROKEN CHANGE**: ~~the default is js module if not extension name provided.~~ use the prefix `js:` to specify the js module name. For example, `js:js_package_name`.
 * The relative path is the folder of the current ai script, not the CWD(current working dir)
 * When importing, a "$" prefix will be automatically added to names without a prefix.
