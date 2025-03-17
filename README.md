@@ -573,6 +573,72 @@ system: |-
 
 With these simple settings, one script can inherit code and configurations from another script.
 
+### Autonomous Invocation and Permission Control of Intelligent Agents(Tools)
+
+Universal autonomous invocation of intelligent agents based on natural language (no specialized model training for `tools` required, the only requirement is strong instruction-following capability).
+
+#### Tool Configuration
+
+By setting the allowed `tools` in the script configuration, these `tools` correspond to PPE script IDs, and the intelligent agent will autonomously invoke these `tools` when needed to complete tasks. Example configuration:
+
+```yaml
+---
+tools:
+  - weather
+  - search
+  - now
+---
+user: 现在几点了？今天上海的天气如何？
+# The intelligent agent will call the corresponding tools based on the configured tools: now, weather, and return the results.
+assistant: "[[Answer]]"
+```
+
+```yaml
+# weather.ai.yaml
+---
+title: get weather information
+input:
+  - location:
+      description: contain city, province(if any) and country
+      example: city,province,country
+      required: true
+  - date:
+      description: the weather information of the specified date
+      example: 2025-02-04T18:07:42+08:00
+      default: today
+---
+# Simulate returning weather information
+$echo: "The weather in Shanghai is overcast turning partly cloudy, with a temperature of 2°C, relative humidity of 60%, wind direction from the southeast, and wind force of 3-4 levels."
+```
+
+Note：
+
+* This specification uses the `title` configuration in the PPE script as a brief description for invoking the tool, and the `input` configuration serves as parameter descriptions.
+* If the user or parent script disables the tools used by this script, using this script will trigger an exception error `MethodNotAllowed`: `permission denied`.
+
+#### Permission Control
+
+Permission control configuration is used to manage the intelligent agent’s access permissions to tools. Users or parent scripts can control the tools used by the intelligent agent through the following configuration:
+
+```yaml
+---
+permissions:
+  ai:
+    call:
+      - "w*"
+      - "now"
+---
+```
+
+Permission Control Rules:
+
+1. **Positive Matching**: Allows AI to call tool scripts that match specified patterns. For example:
+   * `"weather"`: Allows calling the `weather` script.
+   * `"w*"`: Allows calling all scripts starting with w, such as `weather`, `wiki`, etc.
+2. **Negative Matching**: Prohibits AI from calling specified tool scripts. Negative matching rules must start with the prefix `!`. For example:
+   * `"!search"`: Prohibits calling the `search` script.
+3. **Priority**: Negative matching rules take precedence over positive matching rules.
+
 ## Specifications
 
 ### PPE Script Package

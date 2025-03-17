@@ -576,6 +576,24 @@ user: 现在几点了？今天上海的天气如何？
 assistant: "[[Answer]]"
 ```
 
+```yaml
+# weather.ai.yaml
+---
+title: get weather information
+input:
+  - location:
+      description: contain city, province(if any) and country
+      example: city,province,country
+      required: true
+  - date:
+      description: the weather information of the specified date
+      example: 2025-02-04T18:07:42+08:00
+      default: today
+---
+# 模拟返回天气信息
+$echo: "上海的天气阴转多云，气温 2°C，相对湿度 60%，风向 东南风，风力 3-4级。"
+```
+
 注意：
 
 * 该规范会使用PPE脚本中的`title`配置作为调用工具的简短说明，`input`配置作为参数说明
