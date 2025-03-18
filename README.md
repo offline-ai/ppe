@@ -1033,6 +1033,8 @@ $exec:
   args: "?=LatestResult" # Pass the result of $AI to the json agent script through parameters.
 ```
 
+Note: By default, the return result of external scripts will be cached. Caching can be disabled by setting the `memoized` parameter in `args` to `false`.
+
 #### `$if` directive
 
 `$if` directive supports conditional judgment
