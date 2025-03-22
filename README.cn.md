@@ -1185,7 +1185,7 @@ $format:
   templateFormat: "hf"  # 默认为 hf, 目前支持 hf 也就是huggingface用的jinja2; `golang` 也是 `ollama` 和 `localai`用的模板类型; `fstring` 也是 `langchain`在用的.
 ```
 
-#### $set/$get 变量操作指令
+#### `$set/$get` 变量操作指令
 
 支持 key path.
 

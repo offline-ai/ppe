@@ -1185,7 +1185,7 @@ $format:
   templateFormat: "hf" # default is hf, currently supports hf, which is jinja2 used by huggingface; `golang` is also the template type used by `ollama` and `localai`; `fstring` is also `langchain` is in use.
 ```
 
-#### $set/$get variable operation instructions
+#### `$set/$get` variable operation instructions
 
 Support key path.
 
