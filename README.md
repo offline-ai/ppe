@@ -300,9 +300,16 @@ Here are the supported template formats:
 * `golang`: Also known as `localai`, `ollama`. This is the template type used by `ollama` and `localai`;
 * `fstring`: Also known as `python`, `f-string`, `langchain`. This is the format used by `langchain`.
 
-#### When to Use Templated Messages?
+Note: If not necessary, try to use the default template format `hf` as much as possible.
 
-Templated messages can be pre-set in configuration files or dynamically generated during script execution. Typically, the variables in a template are replaced when the message is sent to a large language model (this is called "`deferred`" replacement). If you want to format the message immediately, you can add a `#` character prefix to the relevant text.
+#### On-Demand Message Formatting: When to Use Templated Messages?
+
+Templated messages can be pre-set in configuration section or dynamically generated during script execution. Typically, the variables in a template are replaced when the message is sent to a large language model (this is called on-demand formatting or "`deferred`" replacement). If you want to format the message immediately, you can add a `#` character prefix to the relevant text.  Alternatively, this behavior can be changed by setting the parameter `formatStringStrategy`:
+
+* `Raw`: No formatting will be applied.
+* `Deferred`: On-demand formatting, the default strategy.
+* `Immediate`: Immediate formatting.
+* `Immediate formatting` of messages occurs during operations like $set, $get, $ret, and $echo.
 
 **Note:**
 
