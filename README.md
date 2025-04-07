@@ -738,6 +738,13 @@ import: # Object Format
 * During import, you can use `*` to indicate importing onto the package name object. For example, `"js:path": "* "`, then in the current script, use it through `$path.basename(...)`
   * You can specify specific names to replace `*`. For example, `"js:path": "aPath"`, then in the current script, use it through `$aPath.basename(...)`
 * If the module contains a function `$initializeModule` and it is imported, this function will be executed automatically after the module is loaded.
+  * Exception for packages(directories): The entry script will always be executed as `$initializeModule` automatically after the module is loaded.
+  * To disable this behavior, you must manually set `$initializeModule: {disable: true}` when importing the package(directory).
+  * If you want to disable this behavior within the package itself, then set `$initializeModule: false` in the entry script.
+  * Additionally, directly referencing a file within the package will also skip `$initializeModule`.
+    * Example: `ai:package_name#./some.ai.js`
+    * If you want the entry script of the package to be executed during initialization, ensure that `some.ai.js` is exported via the entry script:
+      * Example: `ai:package_name: ['some']`
 * Default PPE script imports will include the `$[PPE_ID](data)` function for executing PPE scripts; the `$[PPE_ID].interact({message})` function for script interaction; and items exported via the `export` configuration in the PPE script.
 
 ##### Export
