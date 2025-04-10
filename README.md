@@ -646,6 +646,55 @@ Permission Control Rules:
    * `"!search"`: Prohibits calling the `search` script.
 3. **Priority**: Negative matching rules take precedence over positive matching rules.
 
+### Dynamically Adjusting Generation Probability: ((!text:bias)) Syntax
+
+To enable more precise control over the probability distribution of generated text, a new prompt syntax `((!text:bias))` has been introduced. This syntax dynamically adjusts the generation probability of specific tokens (via `logit-bias`) and can be flexibly applied in various scenarios, such as guiding the model to generate specific words, avoiding unwanted content, or adjusting the diversity of generated results.
+
+#### Syntax Overview
+
+* **Basic Format**: `((text:bias))`
+  * `text`: The target word or phrase whose generation probability you want to adjust.
+  * `bias`: The adjustment value, which can take several forms:
+    * **Number**: Directly adds to the logits of the target token.
+    * **Percentage** (e.g., 20%): Adjusts the generation probability proportionally. For instance, 20% means the generation probability will increase by 1.2 times the original probability.
+    * `false`: Completely removes the possibility of generating that token.
+* **Optional Prefix** `!`:
+  * If the prefix ! is present, e.g., `((!text:bias))`, it indicates that the specified content should be removed from the prompt while applying the bias adjustment.
+
+#### Use Cases
+
+* **Guiding Content Generation**:
+  * Example: `((happy:20%))` increases the probability of generating the word "happy" by 20%.
+  * Application: Useful in scenarios where you want the model to generate text with a specific emotion or theme.
+* **Avoiding Specific Content**:
+  * Example: `((!sensitive_word:false))` completely prohibits the generation of the specified sensitive word.
+  * Application: Helps filter out inappropriate or undesirable content.
+* **Dynamically Adjusting Generation Diversity**:
+  * Example: `((creative:50%))` boosts the probability of generating the word "creative" by 50%, encouraging the model to produce more creative content.
+  * Application: Ideal for tasks requiring enhanced diversity in the generated text.
+
+#### Example Code
+
+Here’s a complete example using the ((!text:bias)) syntax:
+
+```yaml
+---
+description: "You are a helpful assistant that generates text with controlled bias."
+---
+user: "Please generate a paragraph describing a happy scene."
+assistant: "((happy:20%)) Let's imagine a sunny day where children are running on the grass, and laughter echoes in the air."
+```
+
+In this example, `((happy:20%))` increases the likelihood of the word "happy," making the generated text more inclined to express joyful emotions.
+
+Notes
+
+* **Moderation Required**: Excessive bias adjustments may overly skew the output toward certain words, affecting the naturalness and diversity of the text.
+* **Context Dependency**: The effect of bias may vary depending on the context. It’s recommended to test and optimize based on specific use cases.
+* **Compatibility**: This syntax currently only works with built-in LLM provider.
+
+By introducing the `((!text:bias))` syntax, we provide a powerful mechanism to fine-tune the output behavior of large language models, meeting the nuanced control requirements of different tasks and needs.
+
 ## Specifications
 
 ### PPE Script Package
