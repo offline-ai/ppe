@@ -1,4 +1,4 @@
-# **NOBJ** (Natural Object) - Natural Language Object Notation
+# **NOBJ** (Natural Object) - Natural Language Object Notation v0.0.1 Draft
 
 ## Introduction
 
